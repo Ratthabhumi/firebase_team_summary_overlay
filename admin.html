@@ -135,7 +135,6 @@
         z-index: 1; /* Ensure values are above the bar */
     }
 
-
     /* For regular stat rows */
     .stat-row {
         display: contents; /* Allows children to participate directly in the grid */
@@ -151,6 +150,16 @@
       align-items: center;
       justify-content: center;
       border-bottom: 1px solid #444; /* Separator for each stat row */
+    }
+
+    /* Added style for sub-heading */
+    .sub-heading {
+      grid-column: span 3; /* Make it span all three columns */
+      text-align: center;
+      font-weight: bold;
+      margin: 15px 0 5px 0; /* Add some margin for spacing */
+      font-size: 1.2em;
+      color: #eee;
     }
 
     .stat-cell {
@@ -205,7 +214,7 @@
 </div>
 
 <div class="main-stats-container" id="statsPanel">
-  </div>
+</div>
 
 <button class="save-btn" onclick="saveToFirebase()">💾 Save to Firebase</button>
 
@@ -268,19 +277,21 @@
         ]
     },
     {
-        title: "SET PIECES",
-        type: "mixed",
-        stats: [
-            ['Scrums Won', 'scrums_won', 'scrums_total'],
-            ['Lineouts Won', 'lineouts_won', 'lineouts_total'],
-            ['Lineout Steals', 'lineout_steals'],
-            ['DEFENCE', 'DEFENCE'], // <-- Insert heading
-            ['Tackles', 'tackles'],
-            ['Tackles Missed', 'tackles_missed'],
-            ['Tackle Success (%)', 'tackle_success'],
-            ['Turnovers Won', 'turnovers_won']
-        ]
-    },
+      title: "SET PIECES & DEFENCE", // Renamed this section title
+      type: "mixed",
+      stats: [
+          ['Scrums Won', 'scrums_won', 'scrums_total'],
+          ['Lineouts Won', 'lineouts_won', 'lineouts_total'],
+          ['Lineout Steals', 'lineout_steals'],
+
+          ['text', 'Defence'],  // This is the sub-heading
+
+          ['Tackles', 'tackles'],
+          ['Tackles Missed', 'tackles_missed'],
+          ['Tackle Success (%)', 'tackle_success'],
+          ['Turnovers Won', 'turnovers_won']
+      ]
+  },
     {
         title: "DISCIPLINE & ERRORS", // Renamed and added errors
         type: "regular",
@@ -304,21 +315,7 @@
             ['Total Kicks', 'total_kicks']
         ]
     }
-    // The old DEFENCE section is removed from here
-];
-
-  // Flattened list of all stat keys for Firebase saving
-  const allStatKeys = [];
-  statSections.forEach(section => {
-    section.stats.forEach(stat => {
-      if (section.type === "mixed" && stat.length > 2) {
-        allStatKeys.push(stat[1]); // won_key
-        allStatKeys.push(stat[2]); // total_key
-      } else {
-        allStatKeys.push(stat[1]); // regular key
-      }
-    });
-  });
+  ];
 
   let selectedTeam = 'a'; // Default to Team A
 
@@ -368,11 +365,18 @@
         });
       } else if (section.type === 'mixed') {
         section.stats.forEach(stat => {
-            const label = stat[0];
-            const key = stat[1]; // primary key like 'scrums_won'
+            const type = stat[0]; // 'text' or actual label
+            const label = stat[1]; // actual label or the text for sub-heading
+            const key = stat[1]; // primary key like 'scrums_won' (if not 'text' type)
             const totalKey = stat[2]; // secondary key like 'scrums_total'
 
-            if (totalKey) { // This is a "won/total" stat (Scrums, Lineouts)
+            if (type === 'text') { // Handle sub-heading
+                const subHeadingDiv = document.createElement('div');
+                subHeadingDiv.classList.add('sub-heading');
+                subHeadingDiv.textContent = label; // The label is the text in this case
+                sectionStatsGrid.appendChild(subHeadingDiv);
+            }
+            else if (totalKey) { // This is a "won/total" stat (Scrums, Lineouts)
                 sectionStatsGrid.insertAdjacentHTML('beforeend', `
                     <div class="stat-cell" id="a-${key}">0/<span id="a-${totalKey}">0</span></div>
                     <div class="stat-label-item">
@@ -527,6 +531,9 @@
     // Iterate through the structured sections to save correct data
     statSections.forEach(section => {
         section.stats.forEach(stat => {
+            const type = stat[0]; // 'text' or actual label
+            if (type === 'text') return; // Skip saving for sub-headings
+
             const key = stat[1]; // Primary key
             const totalKey = stat[2]; // Secondary key for 'won/total' stats
 
