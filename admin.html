@@ -172,17 +172,18 @@
 
   const stats = ['tries', 'conv', 'pen', 'drop', 'possession', 'territory'];
 
-  function adjust(team, stat, diff) {
+  // ✅ FIX: ทำให้เรียกได้จาก HTML
+  window.adjust = function(team, stat, diff) {
     const id = `${team}-${stat}`;
     let current = parseFloat(document.getElementById(id).textContent);
     current += diff;
-    if (stat !== 'territory') current = Math.round(current);  // territory is float
+    if (stat !== 'territory') current = Math.round(current);
     if (current < 0) current = 0;
     if (stat === 'possession' && current > 100) current = 100;
     document.getElementById(id).textContent = current.toFixed(stat === 'territory' ? 1 : 0);
   }
 
-  function saveToFirebase() {
+  window.saveToFirebase = function() {
     const data = { a: {}, b: {} };
     ['a', 'b'].forEach(team => {
       stats.forEach(stat => {
