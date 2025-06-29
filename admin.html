@@ -1,42 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Admin Panel - Rugby Team Summary</title>
-<style>
-  body { font-family: sans-serif; background: #222; color: white; padding: 20px; }
-  label { display: inline-block; width: 140px; }
-  input { width: 60px; margin-bottom: 10px; }
-  button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-  .team-block { margin-bottom: 30px; background: #333; padding: 15px; border-radius: 8px; }
-</style>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - Rugby Team Summary</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #fff;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e1e1e;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #333;
+    }
+    th {
+      background: #2c2c2c;
+    }
+    .btn {
+      padding: 6px 12px;
+      margin: 0 3px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background: #444;
+      color: white;
+    }
+    .btn:hover {
+      background: #666;
+    }
+    .btn-save {
+      margin-top: 20px;
+      background: #007bff;
+    }
+    .btn-save:hover {
+      background: #3399ff;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Admin Panel: Update Team Summary</h1>
+<h1>🛠 Rugby Match Admin</h1>
 
-<div class="team-block" id="teamA">
-  <h2>Team A</h2>
-  <label>Tries:</label><input type="number" id="a-tries" value="6" /><br/>
-  <label>Conversions:</label><input type="number" id="a-conv" value="3" /><br/>
-  <label>Penalty Goals:</label><input type="number" id="a-pen" value="2" /><br/>
-  <label>Drop Goals:</label><input type="number" id="a-drop" value="1" /><br/>
-  <label>Possession %:</label><input type="number" id="a-possession" value="58" /><br/>
-  <label>Territory Avg (km):</label><input type="number" step="0.1" id="a-territory" value="3.2" />
-</div>
+<table>
+  <thead>
+    <tr>
+      <th>Stat</th>
+      <th>Team A</th>
+      <th>Controls</th>
+      <th>Team B</th>
+      <th>Controls</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Tries</td>
+      <td id="a-tries">0</td>
+      <td>
+        <button class="btn" onclick="adjust('a', 'tries', 1)">+</button>
+        <button class="btn" onclick="adjust('a', 'tries', -1)">-</button>
+      </td>
+      <td id="b-tries">0</td>
+      <td>
+        <button class="btn" onclick="adjust('b', 'tries', 1)">+</button>
+        <button class="btn" onclick="adjust('b', 'tries', -1)">-</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Conversions</td>
+      <td id="a-conv">0</td>
+      <td>
+        <button class="btn" onclick="adjust('a', 'conv', 1)">+</button>
+        <button class="btn" onclick="adjust('a', 'conv', -1)">-</button>
+      </td>
+      <td id="b-conv">0</td>
+      <td>
+        <button class="btn" onclick="adjust('b', 'conv', 1)">+</button>
+        <button class="btn" onclick="adjust('b', 'conv', -1)">-</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Penalty Goals</td>
+      <td id="a-pen">0</td>
+      <td>
+        <button class="btn" onclick="adjust('a', 'pen', 1)">+</button>
+        <button class="btn" onclick="adjust('a', 'pen', -1)">-</button>
+      </td>
+      <td id="b-pen">0</td>
+      <td>
+        <button class="btn" onclick="adjust('b', 'pen', 1)">+</button>
+        <button class="btn" onclick="adjust('b', 'pen', -1)">-</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Drop Goals</td>
+      <td id="a-drop">0</td>
+      <td>
+        <button class="btn" onclick="adjust('a', 'drop', 1)">+</button>
+        <button class="btn" onclick="adjust('a', 'drop', -1)">-</button>
+      </td>
+      <td id="b-drop">0</td>
+      <td>
+        <button class="btn" onclick="adjust('b', 'drop', 1)">+</button>
+        <button class="btn" onclick="adjust('b', 'drop', -1)">-</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Possession %</td>
+      <td id="a-possession">50</td>
+      <td>
+        <button class="btn" onclick="adjust('a', 'possession', 1)">+</button>
+        <button class="btn" onclick="adjust('a', 'possession', -1)">-</button>
+      </td>
+      <td id="b-possession">50</td>
+      <td>
+        <button class="btn" onclick="adjust('b', 'possession', 1)">+</button>
+        <button class="btn" onclick="adjust('b', 'possession', -1)">-</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Territory (km)</td>
+      <td id="a-territory">0.0</td>
+      <td>
+        <button class="btn" onclick="adjust('a', 'territory', 0.1)">+</button>
+        <button class="btn" onclick="adjust('a', 'territory', -0.1)">-</button>
+      </td>
+      <td id="b-territory">0.0</td>
+      <td>
+        <button class="btn" onclick="adjust('b', 'territory', 0.1)">+</button>
+        <button class="btn" onclick="adjust('b', 'territory', -0.1)">-</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-<div class="team-block" id="teamB">
-  <h2>Team B</h2>
-  <label>Tries:</label><input type="number" id="b-tries" value="4" /><br/>
-  <label>Conversions:</label><input type="number" id="b-conv" value="2" /><br/>
-  <label>Penalty Goals:</label><input type="number" id="b-pen" value="3" /><br/>
-  <label>Drop Goals:</label><input type="number" id="b-drop" value="0" /><br/>
-  <label>Possession %:</label><input type="number" id="b-possession" value="42" /><br/>
-  <label>Territory Avg (km):</label><input type="number" step="0.1" id="b-territory" value="2.7" />
-</div>
-
-<button id="saveBtn">💾 Save to Firebase</button>
+<center>
+  <button class="btn btn-save" onclick="saveToFirebase()">💾 Save to Firebase</button>
+</center>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
@@ -57,29 +170,31 @@
   const db = getDatabase(app);
   const summaryRef = ref(db, 'summary');
 
-  document.getElementById('saveBtn').addEventListener('click', () => {
-    const data = {
-      a: {
-        tries: Number(document.getElementById('a-tries').value),
-        conv: Number(document.getElementById('a-conv').value),
-        pen: Number(document.getElementById('a-pen').value),
-        drop: Number(document.getElementById('a-drop').value),
-        possession: Number(document.getElementById('a-possession').value),
-        territory: Number(document.getElementById('a-territory').value),
-      },
-      b: {
-        tries: Number(document.getElementById('b-tries').value),
-        conv: Number(document.getElementById('b-conv').value),
-        pen: Number(document.getElementById('b-pen').value),
-        drop: Number(document.getElementById('b-drop').value),
-        possession: Number(document.getElementById('b-possession').value),
-        territory: Number(document.getElementById('b-territory').value),
-      }
-    };
+  const stats = ['tries', 'conv', 'pen', 'drop', 'possession', 'territory'];
+
+  function adjust(team, stat, diff) {
+    const id = `${team}-${stat}`;
+    let current = parseFloat(document.getElementById(id).textContent);
+    current += diff;
+    if (stat !== 'territory') current = Math.round(current);  // territory is float
+    if (current < 0) current = 0;
+    if (stat === 'possession' && current > 100) current = 100;
+    document.getElementById(id).textContent = current.toFixed(stat === 'territory' ? 1 : 0);
+  }
+
+  function saveToFirebase() {
+    const data = { a: {}, b: {} };
+    ['a', 'b'].forEach(team => {
+      stats.forEach(stat => {
+        const id = `${team}-${stat}`;
+        let value = parseFloat(document.getElementById(id).textContent);
+        data[team][stat] = stat === 'territory' ? parseFloat(value.toFixed(1)) : Math.round(value);
+      });
+    });
     set(summaryRef, data)
-      .then(() => alert('Data saved to Firebase!'))
-      .catch(e => alert('Error saving data: ' + e));
-  });
+      .then(() => alert('✅ Data saved to Firebase!'))
+      .catch(err => alert('❌ Error: ' + err.message));
+  }
 </script>
 
 </body>
