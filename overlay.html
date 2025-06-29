@@ -1,106 +1,122 @@
 <!DOCTYPE html>
-<html lang="en" style="background: transparent;">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Rugby Team Summary Overlay</title>
-<style>
-  body {
-    margin: 0; padding: 10px;
-    font-family: sans-serif;
-    background: transparent;
-    color: white;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: rgba(0,0,0,0.6);
-    font-size: 1.2em;
-  }
-  th, td {
-    border: 1px solid white;
-    padding: 8px;
-    text-align: center;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rugby Match Overlay</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: rgba(0, 0, 0, 0);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+    .overlay {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background-color: rgba(0, 43, 127, 0.85);
+      border-radius: 10px;
+      font-size: 18px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid white;
+      padding: 6px 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #003B99;
+    }
+  </style>
 </head>
 <body>
+  <div class="overlay">
+    <div id="scoreline"><strong>Team A</strong> 0 - 0 <strong>Team B</strong></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Stat</th>
+          <th>Team A</th>
+          <th>Team B</th>
+        </tr>
+      </thead>
+      <tbody id="statBody">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Team</th><th>Tries</th><th>Conversions</th><th>Penalty Goals</th><th>Drop Goals</th><th>Total Pts</th><th>Possession %</th><th>Territory Avg (km)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Team A</td>
-      <td id="a-tries">-</td>
-      <td id="a-conv">-</td>
-      <td id="a-pen">-</td>
-      <td id="a-drop">-</td>
-      <td id="a-total">-</td>
-      <td id="a-possession">-</td>
-      <td id="a-territory">-</td>
-    </tr>
-    <tr>
-      <td>Team B</td>
-      <td id="b-tries">-</td>
-      <td id="b-conv">-</td>
-      <td id="b-pen">-</td>
-      <td id="b-drop">-</td>
-      <td id="b-total">-</td>
-      <td id="b-possession">-</td>
-      <td id="b-territory">-</td>
-    </tr>
-  </tbody>
-</table>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+    import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
+      authDomain: "rugby-c8da2.firebaseapp.com",
+      databaseURL: "https://rugby-c8da2-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "rugby-c8da2",
+      storageBucket: "rugby-c8da2.appspot.com",
+      messagingSenderId: "812436187599",
+      appId: "1:812436187599:web:4dd147d1b35c2122c08aba",
+      measurementId: "G-07W3W2VZND"
+    };
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
-    authDomain: "rugby-c8da2.firebaseapp.com",
-    databaseURL: "https://rugby-c8da2-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "rugby-c8da2",
-    storageBucket: "rugby-c8da2.firebasestorage.app",
-    messagingSenderId: "812436187599",
-    appId: "1:812436187599:web:4dd147d1b35c2122c08aba",
-    measurementId: "G-07W3W2VZND"
-  };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const summaryRef = ref(db, 'summary');
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const summaryRef = ref(db, 'summary');
+    const statList = [
+      ['Tries', 'tries'],
+      ['Conversions', 'conv'],
+      ['Penalty Goals', 'pen'],
+      ['Drop Goals', 'drop'],
+      ['Possession %', 'possession'],
+      ['Territory (km)', 'territory'],
+      ['Yellow Cards', 'yellow'],
+      ['Red Cards', 'red'],
+      ['Pens Against', 'pens'],
+      ['Lineouts Won', 'lineouts'],
+      ['Scrums Won', 'scrums'],
+      ['Set Piece TO', 'setpiece'],
+      ['22m Entries', 'entries'],
+      ['Linebreaks', 'breaks'],
+      ['>3phases', 'phases']
+    ];
 
-  onValue(summaryRef, (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return;
+    const scoreline = document.getElementById('scoreline');
+    const statBody = document.getElementById('statBody');
 
-    function updateCell(id, val) {
-      document.getElementById(id).textContent = val ?? '-';
-    }
+    onValue(summaryRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
 
-    ['a','b'].forEach(team => {
-      updateCell(team + '-tries', data[team]?.tries);
-      updateCell(team + '-conv', data[team]?.conv);
-      updateCell(team + '-pen', data[team]?.pen);
-      updateCell(team + '-drop', data[team]?.drop);
-      updateCell(team + '-possession', data[team]?.possession + '%');
-      updateCell(team + '-territory', data[team]?.territory);
+      const a = data.a || {};
+      const b = data.b || {};
+      
+      const aPts = (a.tries || 0) * 5 + (a.conv || 0) * 2 + (a.pen || 0) * 3 + (a.drop || 0) * 3;
+      const bPts = (b.tries || 0) * 5 + (b.conv || 0) * 2 + (b.pen || 0) * 3 + (b.drop || 0) * 3;
 
-      // คำนวณคะแนนรวม
-      const tries = data[team]?.tries || 0;
-      const conv = data[team]?.conv || 0;
-      const pen = data[team]?.pen || 0;
-      const drop = data[team]?.drop || 0;
-      const total = tries*5 + conv*2 + (pen + drop)*3;
-      updateCell(team + '-total', total);
+      scoreline.innerHTML = `<strong>Team A</strong> ${aPts} - ${bPts} <strong>Team B</strong>`;
+
+      statBody.innerHTML = '';
+      statList.forEach(([label, key]) => {
+        const row = `
+          <tr>
+            <td>${label}</td>
+            <td>${a[key] ?? 0}</td>
+            <td>${b[key] ?? 0}</td>
+          </tr>
+        `;
+        statBody.insertAdjacentHTML('beforeend', row);
+      });
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>

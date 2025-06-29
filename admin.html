@@ -6,34 +6,39 @@
   <title>Rugby Match Admin</title>
   <style>
     body {
-      background: #002B7F;
+      background: #000;
       font-family: 'Segoe UI', sans-serif;
-      color: white;
+      color: #fff;
       margin: 0;
       padding: 20px;
     }
     h1 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
     .stats-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
-      background: #003B99;
+      background: #111;
       padding: 20px;
       border-radius: 10px;
     }
+    .stat-row {
+      display: contents;
+    }
     .stat-label {
-      text-align: left;
+      grid-column: span 3;
       font-weight: bold;
-      padding: 10px;
+      padding: 10px 0 5px;
+      border-bottom: 1px solid #444;
+      margin-bottom: 5px;
     }
     .stat-cell {
       text-align: center;
-      background: #004FCC;
+      background: #222;
+      padding: 10px;
       border-radius: 6px;
-      padding: 8px;
     }
     .stat-controls {
       display: flex;
@@ -44,22 +49,24 @@
     button {
       padding: 4px 8px;
       font-size: 14px;
-      border: none;
+      border: 1px solid #888;
       border-radius: 4px;
-      background: #3366ff;
-      color: white;
+      background: #000;
+      color: #fff;
       cursor: pointer;
     }
     button:hover {
-      background: #5588ff;
+      background: #222;
     }
     .save-btn {
       display: block;
       margin: 30px auto 0;
       padding: 10px 20px;
       font-size: 16px;
-      background-color: #007BFF;
+      background-color: #fff;
+      color: #000;
       border-radius: 6px;
+      border: none;
     }
   </style>
 </head>
@@ -67,52 +74,7 @@
 
 <h1>Rugby Match Admin</h1>
 <div class="stats-grid" id="statsPanel">
-  <div class="stat-label">Stat</div>
-  <div class="stat-label">Team A</div>
-  <div class="stat-label">Controls</div>
-  <div class="stat-label">Team B</div>
-  <div class="stat-label">Controls</div>
-
-  <!-- Stats Rows -->
-  <script>
-    const stats = [
-      ['Tries', 'tries'],
-      ['Conversions', 'conv'],
-      ['Penalty Goals', 'pen'],
-      ['Drop Goals', 'drop'],
-      ['Possession %', 'possession'],
-      ['Territory (km)', 'territory'],
-      ['Yellow Cards', 'yellow'],
-      ['Red Cards', 'red'],
-      ['Pens Against', 'pens'],
-      ['Lineouts Won', 'lineouts'],
-      ['Scrums Won', 'scrums'],
-      ['Set Piece TO', 'setpiece'],
-      ['22m Entries', 'entries'],
-      ['Linebreaks', 'breaks'],
-      ['>3phases', 'phases']
-    ];
-
-    let html = '';
-    stats.forEach(([label, id]) => {
-      html += `
-        <div class="stat-label">${label}</div>
-        <div class="stat-cell" id="a-${id}">0</div>
-        <div class="stat-controls">
-          <button onclick="adjust('a','${id}',1)">+</button>
-          <button onclick="adjust('a','${id}',-1)">-</button>
-        </div>
-        <div class="stat-cell" id="b-${id}">0</div>
-        <div class="stat-controls">
-          <button onclick="adjust('b','${id}',1)">+</button>
-          <button onclick="adjust('b','${id}',-1)">-</button>
-        </div>
-      `;
-    });
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('statsPanel').insertAdjacentHTML('beforeend', html);
-    });
-  </script>
+  <!-- Filled by JS -->
 </div>
 
 <button class="save-btn" onclick="saveToFirebase()">💾 Save to Firebase</button>
@@ -136,10 +98,46 @@
   const db = getDatabase(app);
   const summaryRef = ref(db, 'summary');
 
-  const allStats = [
-    'tries','conv','pen','drop','possession','territory',
-    'yellow','red','pens','lineouts','scrums','setpiece','entries','breaks','phases'
+  const stats = [
+    ['Tries', 'tries'],
+    ['Conversions', 'conv'],
+    ['Penalty Goals', 'pen'],
+    ['Drop Goals', 'drop'],
+    ['Possession %', 'possession'],
+    ['Territory (km)', 'territory'],
+    ['Yellow Cards', 'yellow'],
+    ['Red Cards', 'red'],
+    ['Pens Against', 'pens'],
+    ['Lineouts Won', 'lineouts'],
+    ['Scrums Won', 'scrums'],
+    ['Set Piece TO', 'setpiece'],
+    ['22m Entries', 'entries'],
+    ['Linebreaks', 'breaks'],
+    ['>3phases', 'phases']
   ];
+
+  const allStats = stats.map(s => s[1]);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const panel = document.getElementById('statsPanel');
+    stats.forEach(([label, id]) => {
+      panel.insertAdjacentHTML('beforeend', `
+        <div class="stat-row">
+          <div class="stat-label">${label}</div>
+          <div class="stat-cell" id="a-${id}">0</div>
+          <div class="stat-controls">
+            <button onclick="adjust('a','${id}',1)">+</button>
+            <button onclick="adjust('a','${id}',-1)">-</button>
+          </div>
+          <div class="stat-cell" id="b-${id}">0</div>
+          <div class="stat-controls">
+            <button onclick="adjust('b','${id}',1)">+</button>
+            <button onclick="adjust('b','${id}',-1)">-</button>
+          </div>
+        </div>
+      `);
+    });
+  });
 
   window.adjust = function(team, stat, diff) {
     const id = `${team}-${stat}`;
