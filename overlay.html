@@ -416,14 +416,16 @@
                 console.log("No data available in Firebase summary.");
                 return;
             }
-
+        
             const a = data.a || {};
             const b = data.b || {};
-            
-            // NEW: Get team names from Firebase data
-            const teamA_name = data.teamA_name || 'Team A'; // Default to 'Team A' if not set
-            const teamB_name = data.teamB_name || 'Team B'; // Default to 'Team B' if not set
-
+        
+            // --- CHANGE STARTS HERE ---
+            // Change these lines to match what your admin.html is sending
+            const teamA_name = data.teamAname || 'Team A'; // Changed from data.teamA_name
+            const teamB_name = data.teamBname || 'Team B'; // Changed from data.teamB_name
+            // --- CHANGE ENDS HERE ---
+        
             // Update team names in the overlay
             teamANameScore.textContent = teamA_name;
             teamBNameScore.textContent = teamB_name;
