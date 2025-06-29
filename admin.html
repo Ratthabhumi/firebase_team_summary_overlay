@@ -1,166 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin Panel - Rugby Team Summary</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rugby Match Admin</title>
   <style>
     body {
+      background: #002B7F;
       font-family: 'Segoe UI', sans-serif;
-      background: #121212;
-      color: #fff;
-      padding: 30px;
+      color: white;
+      margin: 0;
+      padding: 20px;
     }
     h1 {
       text-align: center;
       margin-bottom: 30px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #1e1e1e;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 10px;
+      background: #003B99;
+      padding: 20px;
       border-radius: 10px;
-      overflow: hidden;
     }
-    th, td {
+    .stat-label {
+      text-align: left;
+      font-weight: bold;
       padding: 10px;
+    }
+    .stat-cell {
       text-align: center;
-      border-bottom: 1px solid #333;
+      background: #004FCC;
+      border-radius: 6px;
+      padding: 8px;
     }
-    th {
-      background: #2c2c2c;
+    .stat-controls {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 5px;
     }
-    .btn {
-      padding: 6px 12px;
-      margin: 0 3px;
-      font-size: 16px;
-      cursor: pointer;
+    button {
+      padding: 4px 8px;
+      font-size: 14px;
       border: none;
       border-radius: 4px;
-      background: #444;
+      background: #3366ff;
       color: white;
+      cursor: pointer;
     }
-    .btn:hover {
-      background: #666;
+    button:hover {
+      background: #5588ff;
     }
-    .btn-save {
-      margin-top: 20px;
-      background: #007bff;
-    }
-    .btn-save:hover {
-      background: #3399ff;
+    .save-btn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
 
-<h1>🛠 Rugby Match Admin</h1>
+<h1>Rugby Match Admin</h1>
+<div class="stats-grid" id="statsPanel">
+  <div class="stat-label">Stat</div>
+  <div class="stat-label">Team A</div>
+  <div class="stat-label">Controls</div>
+  <div class="stat-label">Team B</div>
+  <div class="stat-label">Controls</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Stat</th>
-      <th>Team A</th>
-      <th>Controls</th>
-      <th>Team B</th>
-      <th>Controls</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Tries</td>
-      <td id="a-tries">0</td>
-      <td>
-        <button class="btn" onclick="adjust('a', 'tries', 1)">+</button>
-        <button class="btn" onclick="adjust('a', 'tries', -1)">-</button>
-      </td>
-      <td id="b-tries">0</td>
-      <td>
-        <button class="btn" onclick="adjust('b', 'tries', 1)">+</button>
-        <button class="btn" onclick="adjust('b', 'tries', -1)">-</button>
-      </td>
-    </tr>
-    <tr>
-      <td>Conversions</td>
-      <td id="a-conv">0</td>
-      <td>
-        <button class="btn" onclick="adjust('a', 'conv', 1)">+</button>
-        <button class="btn" onclick="adjust('a', 'conv', -1)">-</button>
-      </td>
-      <td id="b-conv">0</td>
-      <td>
-        <button class="btn" onclick="adjust('b', 'conv', 1)">+</button>
-        <button class="btn" onclick="adjust('b', 'conv', -1)">-</button>
-      </td>
-    </tr>
-    <tr>
-      <td>Penalty Goals</td>
-      <td id="a-pen">0</td>
-      <td>
-        <button class="btn" onclick="adjust('a', 'pen', 1)">+</button>
-        <button class="btn" onclick="adjust('a', 'pen', -1)">-</button>
-      </td>
-      <td id="b-pen">0</td>
-      <td>
-        <button class="btn" onclick="adjust('b', 'pen', 1)">+</button>
-        <button class="btn" onclick="adjust('b', 'pen', -1)">-</button>
-      </td>
-    </tr>
-    <tr>
-      <td>Drop Goals</td>
-      <td id="a-drop">0</td>
-      <td>
-        <button class="btn" onclick="adjust('a', 'drop', 1)">+</button>
-        <button class="btn" onclick="adjust('a', 'drop', -1)">-</button>
-      </td>
-      <td id="b-drop">0</td>
-      <td>
-        <button class="btn" onclick="adjust('b', 'drop', 1)">+</button>
-        <button class="btn" onclick="adjust('b', 'drop', -1)">-</button>
-      </td>
-    </tr>
-    <tr>
-      <td>Possession %</td>
-      <td id="a-possession">50</td>
-      <td>
-        <button class="btn" onclick="adjust('a', 'possession', 1)">+</button>
-        <button class="btn" onclick="adjust('a', 'possession', -1)">-</button>
-      </td>
-      <td id="b-possession">50</td>
-      <td>
-        <button class="btn" onclick="adjust('b', 'possession', 1)">+</button>
-        <button class="btn" onclick="adjust('b', 'possession', -1)">-</button>
-      </td>
-    </tr>
-    <tr>
-      <td>Territory (km)</td>
-      <td id="a-territory">0.0</td>
-      <td>
-        <button class="btn" onclick="adjust('a', 'territory', 0.1)">+</button>
-        <button class="btn" onclick="adjust('a', 'territory', -0.1)">-</button>
-      </td>
-      <td id="b-territory">0.0</td>
-      <td>
-        <button class="btn" onclick="adjust('b', 'territory', 0.1)">+</button>
-        <button class="btn" onclick="adjust('b', 'territory', -0.1)">-</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <!-- Stats Rows -->
+  <script>
+    const stats = [
+      ['Tries', 'tries'],
+      ['Conversions', 'conv'],
+      ['Penalty Goals', 'pen'],
+      ['Drop Goals', 'drop'],
+      ['Possession %', 'possession'],
+      ['Territory (km)', 'territory'],
+      ['Yellow Cards', 'yellow'],
+      ['Red Cards', 'red'],
+      ['Pens Against', 'pens'],
+      ['Lineouts Won', 'lineouts'],
+      ['Scrums Won', 'scrums'],
+      ['Set Piece TO', 'setpiece'],
+      ['22m Entries', 'entries'],
+      ['Linebreaks', 'breaks'],
+      ['>3phases', 'phases']
+    ];
 
-<center>
-  <button class="btn btn-save" onclick="saveToFirebase()">💾 Save to Firebase</button>
-</center>
+    let html = '';
+    stats.forEach(([label, id]) => {
+      html += `
+        <div class="stat-label">${label}</div>
+        <div class="stat-cell" id="a-${id}">0</div>
+        <div class="stat-controls">
+          <button onclick="adjust('a','${id}',1)">+</button>
+          <button onclick="adjust('a','${id}',-1)">-</button>
+        </div>
+        <div class="stat-cell" id="b-${id}">0</div>
+        <div class="stat-controls">
+          <button onclick="adjust('b','${id}',1)">+</button>
+          <button onclick="adjust('b','${id}',-1)">-</button>
+        </div>
+      `;
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('statsPanel').insertAdjacentHTML('beforeend', html);
+    });
+  </script>
+</div>
+
+<button class="save-btn" onclick="saveToFirebase()">💾 Save to Firebase</button>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+  import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
 
   const firebaseConfig = {
     apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
     authDomain: "rugby-c8da2.firebaseapp.com",
     databaseURL: "https://rugby-c8da2-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "rugby-c8da2",
-    storageBucket: "rugby-c8da2.firebasestorage.app",
+    storageBucket: "rugby-c8da2.appspot.com",
     messagingSenderId: "812436187599",
     appId: "1:812436187599:web:4dd147d1b35c2122c08aba",
     measurementId: "G-07W3W2VZND"
@@ -170,33 +136,32 @@
   const db = getDatabase(app);
   const summaryRef = ref(db, 'summary');
 
-  const stats = ['tries', 'conv', 'pen', 'drop', 'possession', 'territory'];
+  const allStats = [
+    'tries','conv','pen','drop','possession','territory',
+    'yellow','red','pens','lineouts','scrums','setpiece','entries','breaks','phases'
+  ];
 
-  // ✅ FIX: ทำให้เรียกได้จาก HTML
   window.adjust = function(team, stat, diff) {
     const id = `${team}-${stat}`;
     let current = parseFloat(document.getElementById(id).textContent);
     current += diff;
-    if (stat !== 'territory') current = Math.round(current);
     if (current < 0) current = 0;
+    if (stat === 'territory') current = parseFloat(current.toFixed(1));
     if (stat === 'possession' && current > 100) current = 100;
-    document.getElementById(id).textContent = current.toFixed(stat === 'territory' ? 1 : 0);
+    document.getElementById(id).textContent = current;
   }
 
   window.saveToFirebase = function() {
     const data = { a: {}, b: {} };
-    ['a', 'b'].forEach(team => {
-      stats.forEach(stat => {
+    ['a','b'].forEach(team => {
+      allStats.forEach(stat => {
         const id = `${team}-${stat}`;
         let value = parseFloat(document.getElementById(id).textContent);
-        data[team][stat] = stat === 'territory' ? parseFloat(value.toFixed(1)) : Math.round(value);
+        data[team][stat] = value;
       });
     });
-    set(summaryRef, data)
-      .then(() => alert('✅ Data saved to Firebase!'))
-      .catch(err => alert('❌ Error: ' + err.message));
+    set(summaryRef, data).then(() => alert('✅ Data saved!'));
   }
 </script>
-
 </body>
 </html>
