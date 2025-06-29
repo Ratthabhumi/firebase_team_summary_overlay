@@ -421,8 +421,10 @@
         
             // --- CHANGE STARTS HERE ---
             // Change these lines to match what your admin.html is sending
-            const teamA_name = data.teamAname || 'Team A';
-            const teamB_name = data.teamBname || 'Team B';
+            const teamA_name = data.a?.name || 'Team A';
+            const teamB_name = data.b?.name || 'Team B';
+
+
             // --- CHANGE ENDS HERE ---
         
             // Update team names in the overlay
