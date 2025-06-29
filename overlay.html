@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en" style="background: transparent">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Summary Overlay</title>
+  <style>
+    body {
+      margin: 0;
+      background: transparent;
+      font-family: sans-serif;
+      color: white;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: rgba(0, 0, 0, 0.5);
+      font-size: 1.2em;
+    }
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid white;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <thead>
+      <tr>
+        <th>Team</th>
+        <th>Tries</th>
+        <th>Conversions</th>
+        <th>Penalty Goals</th>
+        <th>Drop Goals</th>
+        <th>Total Pts</th>
+        <th>Possession %</th>
+        <th>Territory Avg</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Team A</td>
+        <td id="a-tries">-</td>
+        <td id="a-conv">-</td>
+        <td id="a-pen">-</td>
+        <td id="a-drop">-</td>
+        <td id="a-total">-</td>
+        <td id="a-possession">-</td>
+        <td id="a-territory">-</td>
+      </tr>
+      <tr>
+        <td>Team B</td>
+        <td id="b-tries">-</td>
+        <td id="b-conv">-</td>
+        <td id="b-pen">-</td>
+        <td id="b-drop">-</td>
+        <td id="b-total">-</td>
+        <td id="b-possession">-</td>
+        <td id="b-territory">-</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    db.ref('summary').on('value', snapshot => {
+      const data = snapshot.val();
+      if (!data) return;
+      ['a', 'b'].forEach(team => {
+        document.getElementById(team + '-tries').textContent = data[team].tries;
+        document.getElementById(team + '-conv').textContent = data[team].conv;
+        document.getElementById(team + '-pen').textContent = data[team].pen;
+        document.getElementById(team + '-drop').textContent = data[team].drop;
+        document.getElementById(team + '-possession').textContent = data[team].possession + '%';
+        document.getElementById(team + '-territory').textContent = data[team].territory + ' km';
+        const total = data[team].tries * 5 + data[team].conv * 2 + data[team].pen * 3 + data[team].drop * 3;
+        document.getElementById(team + '-total').textContent = total;
+      });
+    });
+  </script>
+</body>
+</html>
