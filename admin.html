@@ -273,7 +273,12 @@
         stats: [
             ['Scrums Won', 'scrums_won', 'scrums_total'],
             ['Lineouts Won', 'lineouts_won', 'lineouts_total'],
-            ['Lineout Steals', 'lineout_steals']
+            ['Lineout Steals', 'lineout_steals'],
+            ['DEFENCE', 'DEFENCE'], // <-- Insert heading
+            ['Tackles', 'tackles'],
+            ['Tackles Missed', 'tackles_missed'],
+            ['Tackle Success (%)', 'tackle_success'],
+            ['Turnovers Won', 'turnovers_won']
         ]
     },
     {
@@ -298,17 +303,8 @@
             ['Kicks Charged Down', 'kicks_charged_down'],
             ['Total Kicks', 'total_kicks']
         ]
-    },
-    {
-        title: "DEFENCE",
-        type: "mixed",
-        stats: [
-            ['Tackles', 'tackles'],
-            ['Tackles Missed', 'tackles_missed'],
-            ['Tackle Success (%)', 'tackle_success'],
-            ['Turnovers Won', 'turnovers_won']
-        ]
     }
+    // The old DEFENCE section is removed from here
 ];
 
   // Flattened list of all stat keys for Firebase saving
@@ -384,14 +380,14 @@
                         <div class="stat-controls">
                             <button onclick="adjust('${key}',1, '${totalKey}')">+</button>
                             <button onclick="adjust('${key}',-1, '${totalKey}')">-</button>
-                            <button onclick="adjust('${totalKey}',1)">T+</button>
-                            <button onclick="adjust('${totalKey}',-1)">T-</button>
+                            <button onclick="adjustTotal('${totalKey}',1)">T+</button>
+                            <button onclick="adjustTotal('${totalKey}',-1)">T-</button>
                         </div>
                     </div>
                     <div class="stat-cell" id="b-${key}">0/<span id="b-${totalKey}">0</span></div>
                 `);
             } else if (key === 'tackle_success') { // Special case for Tackle Success %
-                 sectionStatsGrid.insertAdjacentHTML('beforeend', `
+                    sectionStatsGrid.insertAdjacentHTML('beforeend', `
                     <div class="stat-cell" id="a-${key}">0%</div>
                     <div class="stat-label-item">
                         ${label}
@@ -418,7 +414,7 @@
             }
         });
       }
-      else { // Regular stats (Attack, Discipline, Kicking)
+      else { // Regular stats (Attack, Discipline, Kicking, SCORE)
         section.stats.forEach(([label, key]) => {
           sectionStatsGrid.insertAdjacentHTML('beforeend', `
             <div class="stat-cell" id="a-${key}">0</div>
@@ -457,17 +453,14 @@
             if (current > currentTotal) current = currentTotal; // Can't win more than total
             targetElement.textContent = `${current}/${currentTotal}`;
         } else { // Adjusting 'total' part (unlikely to be called this way from UI)
-             // This branch is now handled by adjustTotal
+            // This branch is now handled by adjustTotal
         }
     } else { // For regular number stats or percentages
         current = parseFloat(targetElement.textContent.replace('%', ''));
         current += diff;
         if (current < 0) current = 0;
-        if (statKey.includes('possession') || statKey.includes('tackle_success')) {
+        if (statKey.includes('possession') || statKey.includes('tackle_success') || statKey.includes('territory')) {
             if (current > 100) current = 100;
-            targetElement.textContent = `${current}%`;
-        } else if (statKey.includes('territory')) {
-            current = parseFloat(current.toFixed(1)); // Keep one decimal for territory
             targetElement.textContent = `${current}%`;
         }
         else {
@@ -564,7 +557,7 @@
     });
 
     set(summaryRef, data).then(() => alert('✅ Data saved!'))
-                         .catch(error => console.error("Error saving to Firebase:", error));
+                        .catch(error => console.error("Error saving to Firebase:", error));
   }
 </script>
 </body>
