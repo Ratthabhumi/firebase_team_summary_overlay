@@ -583,6 +583,10 @@
     // Save team names
     data.a.name = document.getElementById('team-a-name').value;
     data.b.name = document.getElementById('team-b-name').value;
+    data.a.name = teamA;
+    data.b.name = teamB;
+    data.teamAname = teamA;
+    data.teamBname = teamB;
 
     // Iterate through the structured sections to save correct data
     statSections.forEach(section => {
