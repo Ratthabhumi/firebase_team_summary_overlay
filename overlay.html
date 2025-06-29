@@ -5,42 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rugby Match Live Overlay</title>
     <style>
-        body {
-            margin: 0;
-            background-color: rgba(0, 0, 0, 0); /* Fully transparent background */
-            font-family: 'Segoe UI', sans-serif;
-            color: white;
-            overflow: hidden; /* Prevent scrollbars if content overflows */
-        }
+      body {
+        margin: 0;
+        background-color: rgba(0, 0, 0, 0); /* Fully transparent background */
+        font-family: 'Segoe UI', sans-serif;
+        color: white;
+    }
         /* Main container for both overlays */
         .full-screen-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: space-between; /* Space out the two overlays */
-            padding: 20px; /* Overall padding for the screen */
-            box-sizing: border-box;
-            pointer-events: none; /* Allow clicks to pass through to content behind in OBS */
-        }
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          display: flex;
+          justify-content: space-between; /* Space out the two overlays */
+          padding: 20px; /* Overall padding for the screen */
+          box-sizing: border-box;
+          pointer-events: none; /* Allow clicks to pass through to content behind in OBS */
+      }
 
-        .overlay {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start; /* Align content to the top */
-            align-items: center;
-            padding: 15px; /* Slightly more padding for the overall overlay */
-            background-color: rgba(0, 0, 0, 0.7); /* Darker, more neutral background for better contrast */
-            border-radius: 10px;
-            font-size: 18px;
-            max-width: 600px; /* Max width for a single column overlay */
-            width: auto; /* Allow content to dictate width, up to max-width */
-            box-sizing: border-box;
-            gap: 15px; /* Space between main sections */
-            pointer-events: auto; /* Re-enable pointer events for the overlay content */
-        }
+      .overlay {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Align content to the top */
+        align-items: center;
+        padding: 15px; /* Slightly more padding for the overall overlay */
+        background-color: rgba(0, 0, 0, 0.7); /* Darker, more neutral background for better contrast */
+        border-radius: 10px;
+        font-size: 18px;
+        max-width: 600px; /* Max width for a single column overlay */
+        width: auto; /* Allow content to dictate width, up to max-width */
+        box-sizing: border-box;
+        gap: 15px; /* Space between main sections */
+        pointer-events: auto; /* Re-enable pointer events for the overlay content */
+        /* Add overflow-y: auto; to enable vertical scrolling */
+        overflow-y: auto;
+        /* Set a max-height to trigger scrolling when content exceeds it */
+        max-height: calc(100vh - 40px); /* 100vh minus top/bottom padding of full-screen-container */
+    }
 
         /* Styles for the left overlay */
         .left-overlay {
