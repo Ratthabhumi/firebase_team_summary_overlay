@@ -36,7 +36,7 @@
     }
     .stats-grid {
       display: grid;
-      /* Adjusted grid: Team A Score | Stat Label | Team B Score | Controls */
+      /* Columns for Team A Score | Stat Label + Controls | Team B Score */
       grid-template-columns: 1fr 2fr 1fr;
       gap: 10px;
       background: #111;
@@ -53,20 +53,24 @@
       border-bottom: 1px solid #444;
       margin-bottom: 5px;
       grid-column: 2; /* Position in the middle column */
+      display: flex;
+      flex-direction: column; /* Stack label and buttons vertically */
+      align-items: center;
+      justify-content: center;
     }
     .stat-cell {
       text-align: center;
       background: #222;
       padding: 10px;
       border-radius: 6px;
-      display: flex; /* Use flexbox to align content and buttons */
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px; /* Space between value and buttons */
     }
     .stat-controls {
       display: flex;
       gap: 5px;
+      margin-top: 5px; /* Space between label and buttons */
     }
     button {
       padding: 4px 8px;
@@ -146,7 +150,7 @@
   ];
 
   const allStats = stats.map(s => s[1]);
-  let selectedTeam = 'a';
+  let selectedTeam = 'a'; // Default to Team A
 
   window.selectTeam = function(team) {
     selectedTeam = team;
@@ -160,29 +164,23 @@
     stats.forEach(([label, id]) => {
       panel.insertAdjacentHTML('beforeend', `
         <div class="stat-row">
-          <div class="stat-cell">
-            <span id="a-${id}">0</span>
+          <div class="stat-cell" id="a-${id}">0</div>
+          <div class="stat-label">
+            ${label}
             <div class="stat-controls">
-              <button onclick="adjust('a','${id}',1)">+</button>
-              <button onclick="adjust('a','${id}',-1)">-</button>
+              <button onclick="adjust('${id}',1)">+</button>
+              <button onclick="adjust('${id}',-1)">-</button>
             </div>
           </div>
-          <div class="stat-label">${label}</div>
-          <div class="stat-cell">
-            <span id="b-${id}">0</span>
-            <div class="stat-controls">
-              <button onclick="adjust('b','${id}',1)">+</button>
-              <button onclick="adjust('b','${id}',-1)">-</button>
-            </div>
-          </div>
+          <div class="stat-cell" id="b-${id}">0</div>
         </div>
       `);
     });
   });
 
-  // Updated adjust function to accept team
-  window.adjust = function(team, stat, diff) {
-    const id = `${team}-${stat}`;
+  // The adjust function now uses the globally selectedTeam
+  window.adjust = function(stat, diff) {
+    const id = `${selectedTeam}-${stat}`; // Use selectedTeam to determine which score to adjust
     let current = parseFloat(document.getElementById(id).textContent);
     current += diff;
     if (current < 0) current = 0;
