@@ -417,7 +417,10 @@
                 return;
             }
 
-            // Retrieve team names from Firebase
+            const a = data.a || {};
+            const b = data.b || {};
+            
+            // NEW: Get team names from Firebase data
             const teamA_name = data.teamA_name || 'Team A'; // Default to 'Team A' if not set
             const teamB_name = data.teamB_name || 'Team B'; // Default to 'Team B' if not set
 
@@ -427,7 +430,137 @@
             teamANameHeader.textContent = teamA_name;
             teamBNameHeader.textContent = teamB_name;
 
-            console.log(`Team A: ${teamA_name}, Team B: ${teamB_name}`);
+            // Get points directly from Firebase data, as set by Admin
+            const aPts = a.points ?? 0;
+            const bPts = b.points ?? 0;
+
+            scoreline.innerHTML = `<strong><span id="teamANameScore">${teamA_name}</span></strong> ${aPts} - ${bPts} <strong><span id="teamBNameScore">${teamB_name}</span></strong>`;
+
+            // Update Left Overlay
+            while (rugbyOverlay.children.length > 1) { // Keep the scoreline div
+                rugbyOverlay.removeChild(rugbyOverlay.lastChild);
+            }
+
+            statSections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.classList.add('stat-section-display');
+
+                const titleDiv = document.createElement('div');
+                titleDiv.classList.add('section-title-display');
+                titleDiv.textContent = section.title;
+                sectionDiv.appendChild(titleDiv);
+
+                if (section.type === 'bar') {
+                    section.stats.forEach(([label, key]) => {
+                        const valA = a[key] ?? 0;
+                        const valB = b[key] ?? 0;
+
+                        sectionDiv.insertAdjacentHTML('beforeend', `
+                            <div class="bar-stat-row-display">
+                                <div class="bar-label-display">${label}</div>
+                                <div class="progress-bar-container-display">
+                                    <div class="team-a-bar-display" style="width: ${valA}%;"></div>
+                                    <div class="team-b-bar-display" style="width: ${valB}%;"></div>
+                                    <div class="bar-percentage-display">
+                                        <span>${valA}%</span>
+                                        <span>${valB}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                } else { // Regular and Mixed stats
+                    section.stats.forEach(stat => {
+                        const label = stat[0];
+                        const key = stat[1];
+                        const totalKey = stat[2]; // Will be undefined for regular stats
+
+                        let valA, valB;
+                        let displayA, displayB;
+
+                        if (totalKey) { // Scrums Won, Lineouts Won (won/total format)
+                            valA = a[key] ?? 0;
+                            const totalA = a[totalKey] ?? 0;
+                            valB = b[key] ?? 0;
+                            const totalB = b[totalKey] ?? 0;
+                            displayA = `${valA}/${totalA}`;
+                            displayB = `${valB}/${totalB}`;
+                        } else if (key.includes('_success')) { // Any stat ending in _success (e.g., tackle_success)
+                            valA = a[key] ?? 0;
+                            valB = b[key] ?? 0;
+                            displayA = `${valA}%`;
+                            displayB = `${valB}%`;
+                        }
+                        else { // All other regular numerical stats
+                            valA = a[key] ?? 0;
+                            valB = b[key] ?? 0;
+                            displayA = valA;
+                            displayB = valB;
+                        }
+
+                        sectionDiv.insertAdjacentHTML('beforeend', `
+                            <div class="stat-row-display">
+                                <div class="stat-value-display team-a-value">${displayA}</div>
+                                <div class="stat-label-display">${label}</div>
+                                <div class="stat-value-display team-b-value">${displayB}</div>
+                            </div>
+                        `);
+                    });
+                }
+                rugbyOverlay.appendChild(sectionDiv);
+            });
+
+            // Update Right Side Overlay
+            rightSideStatsContainer.innerHTML = ''; // Clear previous stats
+
+            rightSideStatsConfig.forEach(stat => {
+                let label, key, type;
+                if (Array.isArray(stat)) { // Regular stat
+                    label = stat[0];
+                    key = stat[1];
+                    type = 'regular';
+                } else { // Bar stat object
+                    label = stat.label;
+                    key = stat.key;
+                    type = stat.type;
+                }
+
+                if (type === 'bar') {
+                    const valA = a[key] ?? 0;
+                    const valB = b[key] ?? 0;
+                    rightSideStatsContainer.insertAdjacentHTML('beforeend', `
+                        <div class="right-side-bar-row">
+                            <div class="right-side-bar-label">${label}</div>
+                            <div class="progress-bar-container-display">
+                                <div class="team-a-bar-display" style="width: ${valA}%;"></div>
+                                <div class="team-b-bar-display" style="width: ${valB}%;"></div>
+                                <div class="bar-percentage-display">
+                                    <span>${valA}%</span>
+                                    <span>${valB}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                } else { // Regular stats for right side
+                    let displayA, displayB;
+                    // Handle percentage display for certain keys if they show up here
+                    if (key.includes('_success')) {
+                        displayA = `${a[key] ?? 0}%`;
+                        displayB = `${b[key] ?? 0}%`;
+                    } else {
+                        displayA = a[key] ?? 0;
+                        displayB = b[key] ?? 0;
+                    }
+                    
+                    rightSideStatsContainer.insertAdjacentHTML('beforeend', `
+                        <div class="right-side-stat-row">
+                            <div class="right-side-stat-value">${displayA}</div>
+                            <div class="right-side-stat-label">${label}</div>
+                            <div class="right-side-stat-value">${displayB}</div>
+                        </div>
+                    `);
+                }
+            });
         });
     </script>
 </body>
