@@ -65,7 +65,7 @@
     /* New style for the single "Team Names" label */
     .team-names-label {
       font-weight: bold;
-      font-size: 1.2em; /* Slightly larger than default text */
+      font-size: 1.1em; /* Slightly larger than default text */
       margin-bottom: 5px; /* Space between label and inputs */
       color: #eee; /* Light gray to match other headings */
     }
@@ -245,8 +245,9 @@
     <button id="team-a-btn" class="active" onclick="selectTeam('a')">Team A</button>
     <button id="team-b-btn" onclick="selectTeam('b')">Team B</button>
   </div>
+  <!-- Single "Team Names:" label here -->
+  <div class="team-names-label">Team Names:</div>
   <div class="team-name-inputs">
-    <div class="team-names-label">Team Names:</div>
     <input type="text" id="team-a-name" value="Team A" onkeyup="updateTeamName('a', this.value)">
     <input type="text" id="team-b-name" value="Team B" onkeyup="updateTeamName('b', this.value)">
   </div>
@@ -319,7 +320,7 @@
       title: "SET PIECES & DEFENCE", // Renamed this section title
       type: "mixed",
       stats: [
-          ['Scrums Won', 'scrums_won', 'scrums_total'],
+          ['Scrums Won', 'scrums_won', 'scrums_total'], // [label, won_key, total_key]
           ['Lineouts Won', 'lineouts_won', 'lineouts_total'],
           ['Lineout Steals', 'lineout_steals'],
 
@@ -406,6 +407,10 @@
             <div class="progress-bar-container">
               <div class="team-a-bar" id="a-${key}-bar" style="width: 50%;"></div>
               <div class="team-b-bar" id="b-${key}-bar" style="width: 50%;"></div>
+              <div class="bar-percentage-display">
+                  <span>50%</span>
+                  <span>50%</span>
+              </div>
             </div>
             <div class="stat-controls">
               <button onclick="adjustBar('${key}', 5)">+</button>
@@ -580,9 +585,9 @@
   window.saveToFirebase = function() {
     const data = { a: {}, b: {} };
 
-    // Save team names
-    data.a.name = document.getElementById('team-a-name').value;
-    data.b.name = document.getElementById('team-b-name').value;
+    // Save team names directly at the root for easier access in overlay
+    data.teamA_name = document.getElementById('team-a-name').value;
+    data.teamB_name = document.getElementById('team-b-name').value;
 
     // Iterate through the structured sections to save correct data
     statSections.forEach(section => {
