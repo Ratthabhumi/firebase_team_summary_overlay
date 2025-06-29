@@ -19,12 +19,9 @@
       text-align: center;
       margin-bottom: 20px;
     }
-    /* Moved team-selector above team-name-inputs */
     .team-selector {
       text-align: center;
-      margin-bottom: 20px; /* Space between selector and inputs */
-      width: 100%;
-      max-width: 1200px;
+      margin-bottom: 20px;
     }
     .team-selector button {
       margin: 0 10px;
@@ -46,7 +43,7 @@
         display: flex;
         justify-content: center;
         gap: 20px;
-        margin-bottom: 20px; /* Space between inputs and stats container */
+        margin-bottom: 20px;
         width: 100%;
         max-width: 1200px;
     }
@@ -249,11 +246,6 @@
 
 <h1>Rugby Match Admin</h1>
 
-<div class="team-selector">
-  <button id="team-a" class="active" onclick="selectTeam('a')">Team A</button>
-  <button id="team-b" onclick="selectTeam('b')">Team B</button>
-</div>
-
 <div class="team-name-inputs">
     <div>
         <label for="teamAName">Team A Name:</label>
@@ -265,6 +257,11 @@
     </div>
 </div>
 
+<div class="team-selector">
+  <button id="team-a" class="active" onclick="selectTeam('a')">Team A</button>
+  <button id="team-b" onclick="selectTeam('b')">Team B</button>
+</div>
+
 <div class="main-stats-container" id="statsPanel">
 </div>
 
@@ -272,7 +269,7 @@
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-  import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
+  import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js'; // Added onValue
 
   const firebaseConfig = {
     apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
@@ -503,7 +500,6 @@
             // Populate team names
             teamANameInput.value = data.teamNames?.a || 'Team A';
             teamBNameInput.value = data.teamNames?.b || 'Team B';
-            // Update team selector button text
             teamAButton.textContent = teamANameInput.value;
             teamBButton.textContent = teamBNameInput.value;
 
@@ -544,14 +540,6 @@
                 });
             });
         }
-    });
-
-    // Add event listeners for input changes to sync button text
-    teamANameInput.addEventListener('input', () => {
-        teamAButton.textContent = teamANameInput.value || 'Team A';
-    });
-    teamBNameInput.addEventListener('input', () => {
-        teamBButton.textContent = teamBNameInput.value || 'Team B';
     });
   });
 
@@ -643,8 +631,8 @@
   window.saveToFirebase = function() {
     const data = {
         teamNames: {
-            a: teamANameInput.value || 'Team A', // Save Team A's name
-            b: teamBNameInput.value || 'Team B'  // Save Team B's name
+            a: teamANameInput.value || 'Team A',
+            b: teamBNameInput.value || 'Team B'
         },
         a: {},
         b: {}
