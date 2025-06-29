@@ -16,9 +16,27 @@
       text-align: center;
       margin-bottom: 20px;
     }
+    .team-selector {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .team-selector button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .team-selector button.active {
+      background: #0f0;
+      color: #000;
+    }
     .stats-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
       background: #111;
       padding: 20px;
@@ -28,7 +46,7 @@
       display: contents;
     }
     .stat-label {
-      grid-column: span 3;
+      grid-column: span 2;
       font-weight: bold;
       padding: 10px 0 5px;
       border-bottom: 1px solid #444;
@@ -41,10 +59,11 @@
       border-radius: 6px;
     }
     .stat-controls {
+      grid-column: span 2;
       display: flex;
       justify-content: center;
-      gap: 5px;
-      margin-top: 5px;
+      gap: 10px;
+      margin: 10px 0;
     }
     button {
       padding: 4px 8px;
@@ -73,6 +92,11 @@
 <body>
 
 <h1>Rugby Match Admin</h1>
+<div class="team-selector">
+  <button id="team-a" class="active" onclick="selectTeam('a')">Team A</button>
+  <button id="team-b" onclick="selectTeam('b')">Team B</button>
+</div>
+
 <div class="stats-grid" id="statsPanel">
   <!-- Filled by JS -->
 </div>
@@ -117,6 +141,14 @@
   ];
 
   const allStats = stats.map(s => s[1]);
+  let selectedTeam = 'a';
+
+  window.selectTeam = function(team) {
+    selectedTeam = team;
+    document.getElementById('team-a').classList.remove('active');
+    document.getElementById('team-b').classList.remove('active');
+    document.getElementById('team-' + team).classList.add('active');
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
     const panel = document.getElementById('statsPanel');
@@ -125,22 +157,18 @@
         <div class="stat-row">
           <div class="stat-label">${label}</div>
           <div class="stat-cell" id="a-${id}">0</div>
-          <div class="stat-controls">
-            <button onclick="adjust('a','${id}',1)">+</button>
-            <button onclick="adjust('a','${id}',-1)">-</button>
-          </div>
           <div class="stat-cell" id="b-${id}">0</div>
           <div class="stat-controls">
-            <button onclick="adjust('b','${id}',1)">+</button>
-            <button onclick="adjust('b','${id}',-1)">-</button>
+            <button onclick="adjust('${id}',1)">+</button>
+            <button onclick="adjust('${id}',-1)">-</button>
           </div>
         </div>
       `);
     });
   });
 
-  window.adjust = function(team, stat, diff) {
-    const id = `${team}-${stat}`;
+  window.adjust = function(stat, diff) {
+    const id = `${selectedTeam}-${stat}`;
     let current = parseFloat(document.getElementById(id).textContent);
     current += diff;
     if (current < 0) current = 0;
