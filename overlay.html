@@ -10,7 +10,6 @@
             background-color: rgba(0, 0, 0, 0); /* Fully transparent background */
             font-family: 'Segoe UI', sans-serif;
             color: white;
-            /* Added for live stream flexibility */
             overflow: hidden; /* Prevent scrollbars if content overflows */
         }
         .overlay {
@@ -18,63 +17,139 @@
             flex-direction: column;
             justify-content: flex-start; /* Align content to the top */
             align-items: center;
-            padding: 10px;
-            background-color: rgba(0, 43, 127, 0.85); /* Semi-transparent blue background */
+            padding: 15px; /* Slightly more padding for the overall overlay */
+            background-color: rgba(0, 0, 0, 0.7); /* Darker, more neutral background for better contrast */
             border-radius: 10px;
             font-size: 18px;
-            /* Positioning for live stream */
-            position: absolute; /* Allows precise positioning */
-            top: 10px; /* Example: 10px from top */
-            left: 10px; /* Example: 10px from left */
-            max-width: 90%; /* Ensure it doesn't take up the whole screen if embedded */
-            box-sizing: border-box; /* Include padding in width/height calculations */
+            position: absolute;
+            top: 20px; /* Adjust top/left for desired placement in OBS */
+            left: 20px;
+            max-width: 600px; /* Max width for a single column overlay */
+            width: auto; /* Allow content to dictate width, up to max-width */
+            box-sizing: border-box;
+            gap: 15px; /* Space between main sections */
         }
         #scoreline {
-            font-size: 1.5em; /* Make scoreline more prominent */
+            font-size: 2em; /* Make scoreline very prominent */
             margin-bottom: 10px;
             font-weight: bold;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%; /* Table takes full width of its container */
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid white;
-            padding: 6px 12px;
             text-align: center;
-            white-space: nowrap; /* Prevent text wrapping in cells */
+            width: 100%;
         }
-        th {
-            background-color: #003B99; /* Header background color */
+
+        /* Styles for individual stat sections */
+        .stat-section-display {
+            background-color: rgba(0, 43, 127, 0.85); /* Blue background for sections */
+            border-radius: 8px;
+            padding: 10px;
+            width: 100%; /* Take full width of the overlay */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 5px; /* Space between rows within a section */
+            margin-bottom: 10px; /* Space after each section */
         }
-        /* Optional: Add a class for specific rows you want to highlight or hide */
-        .highlight-row {
-            background-color: rgba(255, 255, 0, 0.2); /* Light yellow highlight */
+
+        .section-title-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+        }
+
+        .stat-row-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Lighter separator */
+        }
+        .stat-row-display:last-child {
+            border-bottom: none; /* No border for the last row */
+        }
+
+        .stat-label-display {
+            flex-grow: 1; /* Allows label to take up available space */
+            text-align: left;
+            padding-left: 5px; /* Indent label slightly */
+        }
+        .stat-value-display {
+            font-weight: bold;
+            min-width: 40px; /* Ensure values have enough space */
+            text-align: center;
+        }
+
+        /* Specific styles for bar stats */
+        .bar-stat-row-display {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-bottom: 10px; /* Space after bar charts */
+        }
+
+        .bar-label-display {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .progress-bar-container-display {
+            width: 100%;
+            height: 25px; /* Taller bar */
+            background-color: #555;
+            border-radius: 12px; /* More rounded */
+            display: flex;
+            overflow: hidden;
+            position: relative; /* For absolute positioning of text */
+        }
+
+        .team-a-bar-display, .team-b-bar-display {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center text within the bar */
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: width 0.3s ease-in-out;
+            box-sizing: border-box; /* Include padding in width/height */
+        }
+        .team-a-bar-display {
+            background-color: #007bff; /* Blue */
+        }
+        .team-b-bar-display {
+            background-color: #dc3545; /* Red */
+        }
+
+        .bar-percentage-display {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px; /* Padding for the percentages */
+            box-sizing: border-box;
+            color: white; /* Ensure text is visible */
+            font-weight: bold;
+            font-size: 1.1em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7); /* Adds readability */
         }
     </style>
 </head>
 <body>
-    <div class="overlay">
+    <div class="overlay" id="rugbyOverlay">
         <div id="scoreline"><strong>Team A</strong> 0 - 0 <strong>Team B</strong></div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Stat</th>
-                    <th>Team A</th>
-                    <th>Team B</th>
-                </tr>
-            </thead>
-            <tbody id="statBody">
-                </tbody>
-        </table>
-    </div>
+        </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
         import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
 
-        // Your Firebase configuration (keep this as is)
         const firebaseConfig = {
             apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
             authDomain: "rugby-c8da2.firebaseapp.com",
@@ -90,29 +165,83 @@
         const db = getDatabase(app);
         const summaryRef = ref(db, 'summary');
 
-        // List of statistics to display
-        const statList = [
-            ['Tries', 'tries'],
-            ['Conversions', 'conv'],
-            ['Penalty Goals', 'pen'],
-            ['Drop Goals', 'drop'],
-            ['Possession %', 'possession'],
-            ['Territory (km)', 'territory'],
-            ['Yellow Cards', 'yellow'],
-            ['Red Cards', 'red'],
-            ['Pens Against', 'pens'],
-            ['Lineouts Won', 'lineouts'],
-            ['Scrums Won', 'scrums'],
-            ['Set Piece TO', 'setpiece'],
-            ['22m Entries', 'entries'],
-            ['Linebreaks', 'breaks'],
-            ['>3phases', 'phases']
+        // This structure MUST mirror the statSections in your Admin page
+        const statSections = [
+            {
+                title: "TERRITORY WHOLE GAME",
+                type: "bar",
+                stats: [['Territory (%)', 'territory_wg']]
+            },
+            {
+                title: "POSSESSION WHOLE GAME",
+                type: "bar",
+                stats: [['Possession (%)', 'possession_wg']]
+            },
+            {
+                title: "POSSESSION FIRST HALF",
+                type: "bar",
+                stats: [['Possession FH (%)', 'possession_fh']]
+            },
+            {
+                title: "ATTACK",
+                type: "regular",
+                stats: [
+                    ['Metres Carried', 'metres_carried'],
+                    ['Runs', 'runs'],
+                    ['Carries Over Gainline', 'gainline_carries'],
+                    ['Passes', 'passes'],
+                    ['Defenders Beaten', 'defenders_beaten'],
+                    ['Offloads', 'offloads'],
+                    ['Mauls Won', 'mauls_won'],
+                    ['Rucks Won', 'rucks_won']
+                ]
+            },
+            {
+                title: "SET PIECES",
+                type: "mixed", // For Scrums/Lineouts with success rate
+                stats: [
+                    ['Scrums Won', 'scrums_won', 'scrums_total'], // [label, won_key, total_key]
+                    ['Lineouts Won', 'lineouts_won', 'lineouts_total'],
+                    ['Lineout Steals', 'lineout_steals']
+                ]
+            },
+            {
+                title: "DISCIPLINE",
+                type: "regular",
+                stats: [
+                    ['Penalties Conceded', 'penalties_conceded'],
+                    ['Red Cards', 'red_cards'],
+                    ['Yellow Cards', 'yellow_cards']
+                ]
+            },
+            {
+                title: "KICKING",
+                type: "regular",
+                stats: [
+                    ['Kicks From Hand', 'kicks_from_hand'],
+                    ['Metres From Kicks', 'metres_from_kicks'],
+                    ['Kicks Regathered', 'kicks_regathered'],
+                    ['Kicks In Touch', 'kicks_in_touch'],
+                    ['Kicks Charged Down', 'kicks_charged_down'],
+                    ['Total Kicks', 'total_kicks']
+                ]
+            },
+            {
+                title: "DEFENCE",
+                type: "mixed", // For Tackles with success rate, and others regular
+                stats: [
+                    ['Tackles', 'tackles'],
+                    ['Tackles Missed', 'tackles_missed'],
+                    ['Tackle Success (%)', 'tackle_success'], // This is a percentage, not absolute numbers
+                    ['Turnovers Won', 'turnovers_won']
+                ]
+            }
         ];
 
         const scoreline = document.getElementById('scoreline');
-        const statBody = document.getElementById('statBody');
+        const rugbyOverlay = document.getElementById('rugbyOverlay'); // Renamed from statsPanel
 
-        // Listen for real-time updates from Firebase
+
         onValue(summaryRef, (snapshot) => {
             const data = snapshot.val();
             if (!data) {
@@ -123,24 +252,84 @@
             const a = data.a || {};
             const b = data.b || {};
             
-            // Calculate scores
+            // Calculate scores based on the Admin page's point system
             const aPts = (a.tries || 0) * 5 + (a.conv || 0) * 2 + (a.pen || 0) * 3 + (a.drop || 0) * 3;
             const bPts = (b.tries || 0) * 5 + (b.conv || 0) * 2 + (b.pen || 0) * 3 + (b.drop || 0) * 3;
 
-            // Update scoreline
             scoreline.innerHTML = `<strong>Team A</strong> ${aPts} - ${bPts} <strong>Team B</strong>`;
 
-            // Clear previous table rows and populate with new data
-            statBody.innerHTML = ''; 
-            statList.forEach(([label, key]) => {
-                const row = `
-                    <tr>
-                        <td>${label}</td>
-                        <td>${a[key] ?? 0}</td>
-                        <td>${b[key] ?? 0}</td>
-                    </tr>
-                `;
-                statBody.insertAdjacentHTML('beforeend', row);
+            // Clear previous sections before re-rendering
+            // Exclude scoreline from being cleared
+            while (rugbyOverlay.children.length > 1) { // Keep the scoreline div
+                rugbyOverlay.removeChild(rugbyOverlay.lastChild);
+            }
+
+            statSections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.classList.add('stat-section-display');
+
+                const titleDiv = document.createElement('div');
+                titleDiv.classList.add('section-title-display');
+                titleDiv.textContent = section.title;
+                sectionDiv.appendChild(titleDiv);
+
+                if (section.type === 'bar') {
+                    section.stats.forEach(([label, key]) => {
+                        const valA = a[key] ?? 0;
+                        const valB = b[key] ?? 0;
+
+                        sectionDiv.insertAdjacentHTML('beforeend', `
+                            <div class="bar-stat-row-display">
+                                <div class="bar-label-display">${label}</div>
+                                <div class="progress-bar-container-display">
+                                    <div class="team-a-bar-display" style="width: ${valA}%;"></div>
+                                    <div class="team-b-bar-display" style="width: ${valB}%;"></div>
+                                    <div class="bar-percentage-display">
+                                        <span>${valA}%</span>
+                                        <span>${valB}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                } else { // Regular and Mixed stats
+                    section.stats.forEach(stat => {
+                        const label = stat[0];
+                        const key = stat[1];
+                        const totalKey = stat[2]; // Will be undefined for regular stats
+
+                        let valA, valB;
+                        let displayA, displayB;
+
+                        if (totalKey) { // Scrums Won, Lineouts Won (won/total format)
+                            valA = a[key] ?? 0;
+                            const totalA = a[totalKey] ?? 0;
+                            valB = b[key] ?? 0;
+                            const totalB = b[totalKey] ?? 0;
+                            displayA = `${valA}/${totalA}`;
+                            displayB = `${valB}/${totalB}`;
+                        } else if (key === 'tackle_success') { // Tackle Success %
+                            valA = a[key] ?? 0;
+                            valB = b[key] ?? 0;
+                            displayA = `${valA}%`;
+                            displayB = `${valB}%`;
+                        } else { // All other regular numerical stats
+                            valA = a[key] ?? 0;
+                            valB = b[key] ?? 0;
+                            displayA = valA;
+                            displayB = valB;
+                        }
+
+                        sectionDiv.insertAdjacentHTML('beforeend', `
+                            <div class="stat-row-display">
+                                <div class="stat-value-display team-a-value">${displayA}</div>
+                                <div class="stat-label-display">${label}</div>
+                                <div class="stat-value-display team-b-value">${displayB}</div>
+                            </div>
+                        `);
+                    });
+                }
+                rugbyOverlay.appendChild(sectionDiv);
             });
         });
     </script>
