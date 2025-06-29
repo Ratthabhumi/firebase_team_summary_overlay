@@ -231,6 +231,13 @@
   // Re-organize stats into sections to match the image
   const statSections = [
     {
+        title: "SCORE", // Added a SCORE section for clarity
+        type: "regular",
+        stats: [
+            ['POINTS', 'points'] // Assuming 'points' is the key for total points
+        ]
+    },
+    {
         title: "TERRITORY WHOLE GAME",
         type: "bar",
         stats: [['Territory (%)', 'territory_wg']]
@@ -256,25 +263,28 @@
             ['Defenders Beaten', 'defenders_beaten'],
             ['Offloads', 'offloads'],
             ['Mauls Won', 'mauls_won'],
-            ['Rucks Won', 'rucks_won']
+            ['Rucks Won', 'rucks_won'],
+            ['Linebreaks', 'linebreaks'] // Added Linebreaks here
         ]
     },
     {
         title: "SET PIECES",
-        type: "mixed", // For Scrums/Lineouts with success rate
+        type: "mixed",
         stats: [
-            ['Scrums Won', 'scrums_won', 'scrums_total'], // [label, won_key, total_key]
+            ['Scrums Won', 'scrums_won', 'scrums_total'],
             ['Lineouts Won', 'lineouts_won', 'lineouts_total'],
             ['Lineout Steals', 'lineout_steals']
         ]
     },
     {
-        title: "DISCIPLINE",
+        title: "DISCIPLINE & ERRORS", // Renamed and added errors
         type: "regular",
         stats: [
             ['Penalties Conceded', 'penalties_conceded'],
             ['Red Cards', 'red_cards'],
-            ['Yellow Cards', 'yellow_cards']
+            ['Yellow Cards', 'yellow_cards'],
+            ['Turnovers Conceded', 'turnovers_conceded'], // Added Turnovers Conceded
+            ['Handling Errors', 'handling_errors'] // Added Handling Errors
         ]
     },
     {
@@ -291,15 +301,15 @@
     },
     {
         title: "DEFENCE",
-        type: "mixed", // For Tackles with success rate, and others regular
+        type: "mixed",
         stats: [
             ['Tackles', 'tackles'],
             ['Tackles Missed', 'tackles_missed'],
-            ['Tackle Success (%)', 'tackle_success'], // This is a percentage, not absolute numbers
+            ['Tackle Success (%)', 'tackle_success'],
             ['Turnovers Won', 'turnovers_won']
         ]
     }
-  ];
+];
 
   // Flattened list of all stat keys for Firebase saving
   const allStatKeys = [];
