@@ -1,692 +1,692 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rugby Match Admin</title>
-  <style>
-    body {
-      background: #000;
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center; /* Center the main content horizontally */
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    /* Moved team-selector above team-name-inputs */
-    .team-selector {
-      text-align: center;
-      margin-bottom: 20px; /* Space between selector and inputs */
-      width: 100%;
-      max-width: 1200px;
-    }
-    .team-selector button {
-      margin: 0 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      background: #fff;
-      color: #000;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .team-selector button.active {
-      background: #007bff;
-      color: #000;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rugby Match Admin</title>
+    <style>
+        body {
+            background: #000;
+            font-family: 'Segoe UI', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center the main content horizontally */
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        /* Moved team-selector above team-name-inputs */
+        .team-selector {
+            text-align: center;
+            margin-bottom: 20px; /* Space between selector and inputs */
+            width: 100%;
+            max-width: 1200px;
+        }
+        .team-selector button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .team-selector button.active {
+            background: #007bff;
+            color: #000;
+        }
 
-    /* Team Name Input Styles */
-    .team-name-inputs {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-bottom: 20px; /* Space between inputs and stats container */
-        width: 100%;
-        max-width: 1200px;
-    }
+        /* Team Name Input Styles */
+        .team-name-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px; /* Space between inputs and stats container */
+            width: 100%;
+            max-width: 1200px;
+        }
 
-    .team-name-inputs div {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: #222;
-        padding: 10px 15px;
-        border-radius: 8px;
-        flex: 1; /* Allow divs to grow and take equal space */
-    }
+        .team-name-inputs div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #222;
+            padding: 10px 15px;
+            border-radius: 8px;
+            flex: 1; /* Allow divs to grow and take equal space */
+        }
 
-    .team-name-inputs label {
-        font-weight: bold;
-        margin-bottom: 5px;
-        font-size: 1.1em;
-    }
+        .team-name-inputs label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
 
-    .team-name-inputs input[type="text"] {
-        padding: 8px;
-        border-radius: 4px;
-        border: 1px solid #555;
-        background: #333;
-        color: #fff;
-        width: 80%; /* Adjust width as needed */
-        text-align: center;
-        font-size: 1em;
-    }
+        .team-name-inputs input[type="text"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #333;
+            color: #fff;
+            width: 80%; /* Adjust width as needed */
+            text-align: center;
+            font-size: 1em;
+        }
 
-    /* Main grid for organizing sections */
-    .main-stats-container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr); /* Two columns for sections */
-      gap: 20px; /* Gap between sections */
-      max-width: 1200px; /* Limit overall width */
-      width: 100%;
-      background: #111; /* Background for the entire stats area */
-      padding: 20px;
-      border-radius: 10px;
-    }
+        /* Main grid for organizing sections */
+        .main-stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Two columns for sections */
+            gap: 20px; /* Gap between sections */
+            max-width: 1200px; /* Limit overall width */
+            width: 100%;
+            background: #111; /* Background for the entire stats area */
+            padding: 20px;
+            border-radius: 10px;
+        }
 
-    /* Styles for each stat section (TERRITORY, ATTACK, etc.) */
-    .stat-section {
-      background: #222; /* Slightly darker background for individual sections */
-      padding: 15px;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px; /* Gap between rows within a section */
-    }
+        /* Styles for each stat section (TERRITORY, ATTACK, etc.) */
+        .stat-section {
+            background: #222; /* Slightly darker background for individual sections */
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Gap between rows within a section */
+        }
 
-    .section-title {
-      font-size: 1.2em;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      color: #eee;
-    }
+        .section-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: #eee;
+        }
 
-    /* Specific styles for the stat rows within sections */
-    .section-stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr; /* Team A, Label+Controls, Team B */
-      gap: 5px; /* Smaller gap within stats rows */
-      align-items: center;
-    }
+        /* Specific styles for the stat rows within sections */
+        .section-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr; /* Team A, Label+Controls, Team B */
+            gap: 5px; /* Smaller gap within stats rows */
+            align-items: center;
+        }
 
-    /* Special layout for possession/territory bars */
-    .bar-stat-row {
-      grid-column: span 3; /* Span across all 3 columns */
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      align-items: center;
-      padding: 5px 0;
-      border-bottom: 1px solid #333;
-    }
+        /* Special layout for possession/territory bars */
+        .bar-stat-row {
+            grid-column: span 3; /* Span across all 3 columns */
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
 
-    .bar-label {
-      font-weight: bold;
-      text-align: center;
-    }
+        .bar-label {
+            font-weight: bold;
+            text-align: center;
+        }
 
-    .progress-bar-container {
-      width: 90%;
-      height: 20px;
-      background-color: #555;
-      border-radius: 10px;
-      display: flex;
-      overflow: hidden;
-      margin-top: 5px;
-    }
+        .progress-bar-container {
+            width: 90%;
+            height: 20px;
+            background-color: #555;
+            border-radius: 10px;
+            display: flex;
+            overflow: hidden;
+            margin-top: 5px;
+        }
 
-    .team-a-bar {
-      height: 100%;
-      background-color: #007bff; /* Blue */
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 5px;
-      color: white;
-      font-weight: bold;
-      transition: width 0.3s ease-in-out;
-    }
+        .team-a-bar {
+            height: 100%;
+            background-color: #007bff; /* Blue */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 5px;
+            color: white;
+            font-weight: bold;
+            transition: width 0.3s ease-in-out;
+        }
 
-    .team-b-bar {
-      height: 100%;
-      background-color: #dc3545; /* Red */
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      padding-left: 5px;
-      color: white;
-      font-weight: bold;
-      transition: width 0.3s ease-in-out;
-    }
-    .bar-values {
-        display: flex;
-        justify-content: space-between;
-        width: 90%;
-        font-weight: bold;
-        margin-top: -15px; /* Pull values up over the bar */
-        z-index: 1; /* Ensure values are above the bar */
-    }
+        .team-b-bar {
+            height: 100%;
+            background-color: #dc3545; /* Red */
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 5px;
+            color: white;
+            font-weight: bold;
+            transition: width 0.3s ease-in-out;
+        }
+        .bar-values {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            font-weight: bold;
+            margin-top: -15px; /* Pull values up over the bar */
+            z-index: 1; /* Ensure values are above the bar */
+        }
 
-    /* For regular stat rows */
-    .stat-row {
-        display: contents; /* Allows children to participate directly in the grid */
-    }
+        /* For regular stat rows */
+        .stat-row {
+            display: contents; /* Allows children to participate directly in the grid */
+        }
 
-    .stat-label-item {
-      text-align: center;
-      font-weight: bold;
-      padding: 5px 0;
-      grid-column: 2; /* Middle column for label */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 1px solid #444; /* Separator for each stat row */
-    }
+        .stat-label-item {
+            text-align: center;
+            font-weight: bold;
+            padding: 5px 0;
+            grid-column: 2; /* Middle column for label */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #444; /* Separator for each stat row */
+        }
 
-    /* Added style for sub-heading */
-    .sub-heading {
-      grid-column: span 3; /* Make it span all three columns */
-      text-align: center;
-      font-weight: bold;
-      margin: 15px 0 5px 0; /* Add some margin for spacing */
-      font-size: 1.2em;
-      color: #eee;
-    }
+        /* Added style for sub-heading */
+        .sub-heading {
+            grid-column: span 3; /* Make it span all three columns */
+            text-align: center;
+            font-weight: bold;
+            margin: 15px 0 5px 0; /* Add some margin for spacing */
+            font-size: 1.2em;
+            color: #eee;
+        }
 
-    .stat-cell {
-      text-align: center;
-      background: #333; /* Darker background for score cells */
-      padding: 8px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1em; /* Slightly larger font for numbers */
-    }
-    .stat-controls {
-      display: flex;
-      gap: 5px;
-      margin-top: 5px; /* Space between label and buttons */
-    }
-    button {
-      padding: 4px 8px;
-      font-size: 14px;
-      border: 1px solid #888;
-      border-radius: 4px;
-      background: #000;
-      color: #fff;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #222;
-    }
-    .save-btn {
-      display: block;
-      margin: 30px auto 0;
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #fff;
-      color: #000;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-    .save-btn:hover {
-      background-color: #eee;
-    }
-  </style>
+        .stat-cell {
+            text-align: center;
+            background: #333; /* Darker background for score cells */
+            padding: 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em; /* Slightly larger font for numbers */
+        }
+        .stat-controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px; /* Space between label and buttons */
+        }
+        button {
+            padding: 4px 8px;
+            font-size: 14px;
+            border: 1px solid #888;
+            border-radius: 4px;
+            background: #000;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #222;
+        }
+        .save-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #000;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+        .save-btn:hover {
+            background-color: #eee;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Rugby Match Admin</h1>
+    <h1>Rugby Match Admin</h1>
 
-<div class="team-selector">
-  <button id="team-a" class="active" onclick="selectTeam('a')">Team A</button>
-  <button id="team-b" onclick="selectTeam('b')">Team B</button>
-</div>
-
-<div class="team-name-inputs">
-    <div>
-        <label for="teamAName">Team A Name:</label>
-        <input type="text" id="teamAName" value="Team A">
+    <div class="team-selector">
+        <button id="team-a" class="active" onclick="selectTeam('a')">Team A</button>
+        <button id="team-b" onclick="selectTeam('b')">Team B</button>
     </div>
-    <div>
-        <label for="teamBName">Team B Name:</label>
-        <input type="text" id="teamBName" value="Team B">
+
+    <div class="team-name-inputs">
+        <div>
+            <label for="teamAName">Team A Name:</label>
+            <input type="text" id="teamAName" value="Team A">
+        </div>
+        <div>
+            <label for="teamBName">Team B Name:</label>
+            <input type="text" id="teamBName" value="Team B">
+        </div>
     </div>
-</div>
 
-<div class="main-stats-container" id="statsPanel">
-</div>
+    <div class="main-stats-container" id="statsPanel">
+    </div>
 
-<button class="save-btn" onclick="saveToFirebase()">💾 Save to Firebase</button>
+    <button class="save-btn" onclick="saveToFirebase()">💾 Save to Firebase</button>
 
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-  import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+        import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
-    authDomain: "rugby-c8da2.firebaseapp.com",
-    databaseURL: "https://rugby-c8da2-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "rugby-c8da2",
-    storageBucket: "rugby-c8da2.appspot.com",
-    messagingSenderId: "812436187599",
-    appId: "1:812436187599:web:4dd147d1b35c2122c08aba",
-    measurementId: "G-07W3W2VZND"
-  };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
+            authDomain: "rugby-c8da2.firebaseapp.com",
+            databaseURL: "https://rugby-c8da2-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "rugby-c8da2",
+            storageBucket: "rugby-c8da2.appspot.com",
+            messagingSenderId: "812436187599",
+            appId: "1:812436187599:web:4dd147d1b35c2122c08aba",
+            measurementId: "G-07W3W2VZND"
+        };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const summaryRef = ref(db, 'summary');
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const summaryRef = ref(db, 'summary');
 
-  const teamANameInput = document.getElementById('teamAName');
-  const teamBNameInput = document.getElementById('teamBName');
-  const teamAButton = document.getElementById('team-a');
-  const teamBButton = document.getElementById('team-b');
+        const teamANameInput = document.getElementById('teamAName');
+        const teamBNameInput = document.getElementById('teamBName');
+        const teamAButton = document.getElementById('team-a');
+        const teamBButton = document.getElementById('team-b');
 
-  // Re-organize stats into sections to match the image
-  const statSections = [
-    {
-        title: "SCORE", // Added a SCORE section for clarity
-        type: "regular",
-        stats: [
-            ['POINTS', 'points'] // Assuming 'points' is the key for total points
-        ]
-    },
-    {
-        title: "TERRITORY WHOLE GAME",
-        type: "bar",
-        stats: [['Territory (%)', 'territory_wg']]
-    },
-    {
-        title: "POSSESSION WHOLE GAME",
-        type: "bar",
-        stats: [['Possession (%)', 'possession_wg']]
-    },
-    {
-        title: "POSSESSION FIRST HALF",
-        type: "bar",
-        stats: [['Possession FH (%)', 'possession_fh']]
-    },
-    {
-        title: "ATTACK",
-        type: "regular",
-        stats: [
-            ['Metres Carried', 'metres_carried'],
-            ['Runs', 'runs'],
-            ['Carries Over Gainline', 'gainline_carries'],
-            ['Passes', 'passes'],
-            ['Defenders Beaten', 'defenders_beaten'],
-            ['Offloads', 'offloads'],
-            ['Mauls Won', 'mauls_won'],
-            ['Rucks Won', 'rucks_won'],
-            ['Linebreaks', 'linebreaks'] // Added Linebreaks here
-        ]
-    },
-    {
-      title: "SET PIECES & DEFENCE", // Renamed this section title
-      type: "mixed",
-      stats: [
-          ['Scrums Won', 'scrums_won', 'scrums_total'],
-          ['Lineouts Won', 'lineouts_won', 'lineouts_total'],
-          ['Lineout Steals', 'lineout_steals'],
+        // Re-organize stats into sections to match the image
+        const statSections = [
+            {
+                title: "SCORE", // Added a SCORE section for clarity
+                type: "regular",
+                stats: [
+                    ['POINTS', 'points'] // Assuming 'points' is the key for total points
+                ]
+            },
+            {
+                title: "TERRITORY WHOLE GAME",
+                type: "bar",
+                stats: [['Territory (%)', 'territory_wg']]
+            },
+            {
+                title: "POSSESSION WHOLE GAME",
+                type: "bar",
+                stats: [['Possession (%)', 'possession_wg']]
+            },
+            {
+                title: "POSSESSION FIRST HALF",
+                type: "bar",
+                stats: [['Possession FH (%)', 'possession_fh']]
+            },
+            {
+                title: "ATTACK",
+                type: "regular",
+                stats: [
+                    ['Metres Carried', 'metres_carried'],
+                    ['Runs', 'runs'],
+                    ['Carries Over Gainline', 'gainline_carries'],
+                    ['Passes', 'passes'],
+                    ['Defenders Beaten', 'defenders_beaten'],
+                    ['Offloads', 'offloads'],
+                    ['Mauls Won', 'mauls_won'],
+                    ['Rucks Won', 'rucks_won'],
+                    ['Linebreaks', 'linebreaks'] // Added Linebreaks here
+                ]
+            },
+            {
+                title: "SET PIECES & DEFENCE", // Renamed this section title
+                type: "mixed",
+                stats: [
+                    ['Scrums Won', 'scrums_won', 'scrums_total'],
+                    ['Lineouts Won', 'lineouts_won', 'lineouts_total'],
+                    ['Lineout Steals', 'lineout_steals'],
 
-          ['text', 'Defence'],  // This is the sub-heading
+                    ['text', 'Defence'],  // This is the sub-heading
 
-          ['Tackles', 'tackles'],
-          ['Tackles Missed', 'tackles_missed'],
-          ['Tackle Success (%)', 'tackle_success'],
-          ['Turnovers Won', 'turnovers_won']
-      ]
-  },
-    {
-        title: "DISCIPLINE & ERRORS", // Renamed and added errors
-        type: "regular",
-        stats: [
-            ['Penalties Conceded', 'penalties_conceded'],
-            ['Red Cards', 'red_cards'],
-            ['Yellow Cards', 'yellow_cards'],
-            ['Turnovers Conceded', 'turnovers_conceded'], // Added Turnovers Conceded
-            ['Handling Errors', 'handling_errors'] // Added Handling Errors
-        ]
-    },
-    {
-        title: "KICKING",
-        type: "regular",
-        stats: [
-            ['Kicks From Hand', 'kicks_from_hand'],
-            ['Metres From Kicks', 'metres_from_kicks'],
-            ['Kicks Regathered', 'kicks_regathered'],
-            ['Kicks In Touch', 'kicks_in_touch'],
-            ['Kicks Charged Down', 'kicks_charged_down'],
-            ['Total Kicks', 'total_kicks']
-        ]
-    }
-  ];
-
-  let selectedTeam = 'a'; // Default to Team A
-
-  window.selectTeam = function(team) {
-    selectedTeam = team;
-    teamAButton.classList.remove('active');
-    teamBButton.classList.remove('active');
-    document.getElementById('team-' + team).classList.add('active');
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const mainContainer = document.getElementById('statsPanel');
-
-    statSections.forEach(section => {
-      const sectionDiv = document.createElement('div');
-      sectionDiv.classList.add('stat-section');
-
-      const titleDiv = document.createElement('div');
-      titleDiv.classList.add('section-title');
-      titleDiv.textContent = section.title;
-      sectionDiv.appendChild(titleDiv);
-
-      const sectionStatsGrid = document.createElement('div');
-      sectionStatsGrid.classList.add('section-stats-grid');
-
-      if (section.type === 'bar') {
-        // Handle bar stats (Territory, Possession)
-        section.stats.forEach(([label, key]) => {
-          const barStatRow = document.createElement('div');
-          barStatRow.classList.add('bar-stat-row');
-          barStatRow.innerHTML = `
-            <div class="bar-label">${label}</div>
-            <div class="bar-values">
-                <span id="a-${key}-value">0%</span>
-                <span id="b-${key}-value">0%</span>
-            </div>
-            <div class="progress-bar-container">
-              <div class="team-a-bar" id="a-${key}-bar" style="width: 50%;"></div>
-              <div class="team-b-bar" id="b-${key}-bar" style="width: 50%;"></div>
-            </div>
-            <div class="stat-controls">
-              <button onclick="adjustBar('${key}', 5)">+</button>
-              <button onclick="adjustBar('${key}', -5)">-</button>
-            </div>
-          `;
-          sectionStatsGrid.appendChild(barStatRow);
-        });
-      } else if (section.type === 'mixed') {
-        section.stats.forEach(stat => {
-            const type = stat[0]; // 'text' or actual label
-            if (type === 'text') { // Handle sub-heading
-                const subHeadingDiv = document.createElement('div');
-                subHeadingDiv.classList.add('sub-heading');
-                subHeadingDiv.textContent = stat[1]; // The label is the text in this case
-                sectionStatsGrid.appendChild(subHeadingDiv);
+                    ['Tackles', 'tackles'],
+                    ['Tackles Missed', 'tackles_missed'],
+                    ['Tackle Success (%)', 'tackle_success'],
+                    ['Turnovers Won', 'turnovers_won']
+                ]
+            },
+            {
+                title: "DISCIPLINE & ERRORS", // Renamed and added errors
+                type: "regular",
+                stats: [
+                    ['Penalties Conceded', 'penalties_conceded'],
+                    ['Red Cards', 'red_cards'],
+                    ['Yellow Cards', 'yellow_cards'],
+                    ['Turnovers Conceded', 'turnovers_conceded'], // Added Turnovers Conceded
+                    ['Handling Errors', 'handling_errors'] // Added Handling Errors
+                ]
+            },
+            {
+                title: "KICKING",
+                type: "regular",
+                stats: [
+                    ['Kicks From Hand', 'kicks_from_hand'],
+                    ['Metres From Kicks', 'metres_from_kicks'],
+                    ['Kicks Regathered', 'kicks_regathered'],
+                    ['Kicks In Touch', 'kicks_in_touch'],
+                    ['Kicks Charged Down', 'kicks_charged_down'],
+                    ['Total Kicks', 'total_kicks']
+                ]
             }
-            else { // Regular or won/total stat
-                const label = stat[0];
-                const key = stat[1]; // primary key like 'scrums_won'
-                const totalKey = stat[2]; // secondary key like 'scrums_total'
+        ];
 
-                if (totalKey) { // This is a "won/total" stat (Scrums, Lineouts)
-                    sectionStatsGrid.insertAdjacentHTML('beforeend', `
-                        <div class="stat-cell" id="a-${key}">0/<span id="a-${totalKey}">0</span></div>
-                        <div class="stat-label-item">
-                            ${label}
-                            <div class="stat-controls">
-                                <button onclick="adjust('${key}',1, '${totalKey}')">+</button>
-                                <button onclick="adjust('${key}',-1, '${totalKey}')">-</button>
-                                <button onclick="adjustTotal('${totalKey}',1)">T+</button>
-                                <button onclick="adjustTotal('${totalKey}',-1)">T-</button>
+        let selectedTeam = 'a'; // Default to Team A
+
+        window.selectTeam = function(team) {
+            selectedTeam = team;
+            teamAButton.classList.remove('active');
+            teamBButton.classList.remove('active');
+            document.getElementById('team-' + team).classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContainer = document.getElementById('statsPanel');
+
+            statSections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.classList.add('stat-section');
+
+                const titleDiv = document.createElement('div');
+                titleDiv.classList.add('section-title');
+                titleDiv.textContent = section.title;
+                sectionDiv.appendChild(titleDiv);
+
+                const sectionStatsGrid = document.createElement('div');
+                sectionStatsGrid.classList.add('section-stats-grid');
+
+                if (section.type === 'bar') {
+                    // Handle bar stats (Territory, Possession)
+                    section.stats.forEach(([label, key]) => {
+                        const barStatRow = document.createElement('div');
+                        barStatRow.classList.add('bar-stat-row');
+                        barStatRow.innerHTML = `
+                            <div class="bar-label">${label}</div>
+                            <div class="bar-values">
+                                <span id="a-${key}-value">0%</span>
+                                <span id="b-${key}-value">0%</span>
                             </div>
-                        </div>
-                        <div class="stat-cell" id="b-${key}">0/<span id="b-${totalKey}">0</span></div>
-                    `);
-                } else if (key === 'tackle_success') { // Special case for Tackle Success %
-                    sectionStatsGrid.insertAdjacentHTML('beforeend', `
-                    <div class="stat-cell" id="a-${key}">0%</div>
-                    <div class="stat-label-item">
-                        ${label}
-                        <div class="stat-controls">
-                            <button onclick="adjust('${key}',5)">+</button>
-                            <button onclick="adjust('${key}',-5)">-</button>
-                        </div>
-                    </div>
-                    <div class="stat-cell" id="b-${key}">0%</div>
-                    `);
+                            <div class="progress-bar-container">
+                                <div class="team-a-bar" id="a-${key}-bar" style="width: 50%;"></div>
+                                <div class="team-b-bar" id="b-${key}-bar" style="width: 50%;"></div>
+                            </div>
+                            <div class="stat-controls">
+                                <button onclick="adjustBar('${key}', 5)">+</button>
+                                <button onclick="adjustBar('${key}', -5)">-</button>
+                            </div>
+                        `;
+                        sectionStatsGrid.appendChild(barStatRow);
+                    });
+                } else if (section.type === 'mixed') {
+                    section.stats.forEach(stat => {
+                        const type = stat[0]; // 'text' or actual label
+                        if (type === 'text') { // Handle sub-heading
+                            const subHeadingDiv = document.createElement('div');
+                            subHeadingDiv.classList.add('sub-heading');
+                            subHeadingDiv.textContent = stat[1]; // The label is the text in this case
+                            sectionStatsGrid.appendChild(subHeadingDiv);
+                        }
+                        else { // Regular or won/total stat
+                            const label = stat[0];
+                            const key = stat[1]; // primary key like 'scrums_won'
+                            const totalKey = stat[2]; // secondary key like 'scrums_total'
+
+                            if (totalKey) { // This is a "won/total" stat (Scrums, Lineouts)
+                                sectionStatsGrid.insertAdjacentHTML('beforeend', `
+                                    <div class="stat-cell" id="a-${key}">0/<span id="a-${totalKey}">0</span></div>
+                                    <div class="stat-label-item">
+                                        ${label}
+                                        <div class="stat-controls">
+                                            <button onclick="adjust('${key}',1, '${totalKey}')">+</button>
+                                            <button onclick="adjust('${key}',-1, '${totalKey}')">-</button>
+                                            <button onclick="adjustTotal('${totalKey}',1)">T+</button>
+                                            <button onclick="adjustTotal('${totalKey}',-1)">T-</button>
+                                        </div>
+                                    </div>
+                                    <div class="stat-cell" id="b-${key}">0/<span id="b-${totalKey}">0</span></div>
+                                `);
+                            } else if (key === 'tackle_success') { // Special case for Tackle Success %
+                                sectionStatsGrid.insertAdjacentHTML('beforeend', `
+                                    <div class="stat-cell" id="a-${key}">0%</div>
+                                    <div class="stat-label-item">
+                                        ${label}
+                                        <div class="stat-controls">
+                                            <button onclick="adjust('${key}',5)">+</button>
+                                            <button onclick="adjust('${key}',-5)">-</button>
+                                        </div>
+                                    </div>
+                                    <div class="stat-cell" id="b-${key}">0%</div>
+                                `);
+                            }
+                            else { // All other regular numerical stats
+                                sectionStatsGrid.insertAdjacentHTML('beforeend', `
+                                    <div class="stat-cell" id="a-${key}">0</div>
+                                    <div class="stat-label-item">
+                                        ${label}
+                                        <div class="stat-controls">
+                                            <button onclick="adjust('${key}',1)">+</button>
+                                            <button onclick="adjust('${key}',-1)">-</button>
+                                        </div>
+                                    </div>
+                                    <div class="stat-cell" id="b-${key}">0</div>
+                                `);
+                            }
+                        }
+                    });
                 }
-                else { // All other regular numerical stats
-                    sectionStatsGrid.insertAdjacentHTML('beforeend', `
-                        <div class="stat-cell" id="a-${key}">0</div>
-                        <div class="stat-label-item">
-                            ${label}
-                            <div class="stat-controls">
-                                <button onclick="adjust('${key}',1)">+</button>
-                                <button onclick="adjust('${key}',-1)">-</button>
+                else { // Regular stats (Attack, Discipline, Kicking, SCORE)
+                    section.stats.forEach(([label, key]) => {
+                        sectionStatsGrid.insertAdjacentHTML('beforeend', `
+                            <div class="stat-cell" id="a-${key}">0</div>
+                            <div class="stat-label-item">
+                                ${label}
+                                <div class="stat-controls">
+                                    <button onclick="adjust('${key}',1)">+</button>
+                                    <button onclick="adjust('${key}',-1)">-</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="stat-cell" id="b-${key}">0</div>
-                    `);
+                            <div class="stat-cell" id="b-${key}">0</div>
+                        `);
+                    });
+                }
+                sectionDiv.appendChild(sectionStatsGrid);
+                mainContainer.appendChild(sectionDiv);
+            });
+
+            // Load initial data from Firebase on page load
+            onValue(summaryRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // Populate team names
+                    teamANameInput.value = data.teamNames?.a || 'Team A';
+                    teamBNameInput.value = data.teamNames?.b || 'Team B';
+                    // Update team selector button text
+                    teamAButton.textContent = teamANameInput.value;
+                    teamBButton.textContent = teamBNameInput.value;
+
+
+                    // Populate stats
+                    statSections.forEach(section => {
+                        section.stats.forEach(stat => {
+                            const type = stat[0];
+                            if (type === 'text') return; // Skip sub-headings
+
+                            const key = stat[1];
+                            const totalKey = stat[2];
+
+                            if (section.type === 'bar') {
+                                const valA = data.a?.[key] ?? 0;
+                                const valB = data.b?.[key] ?? 0;
+                                document.getElementById(`a-${key}-value`).textContent = `${valA}%`;
+                                document.getElementById(`b-${key}-value`).textContent = `${valB}%`;
+                                document.getElementById(`a-${key}-bar`).style.width = `${valA}%`;
+                                document.getElementById(`b-${key}-bar`).style.width = `${valB}%`;
+                            } else if (totalKey) {
+                                const valAWon = data.a?.[key] ?? 0;
+                                const valATotal = data.a?.[totalKey] ?? 0;
+                                const valBWon = data.b?.[key] ?? 0;
+                                const valBTotal = data.b?.[totalKey] ?? 0;
+                                document.getElementById(`a-${key}`).textContent = `${valAWon}/`;
+                                document.getElementById(`a-${totalKey}`).textContent = valATotal;
+                                document.getElementById(`b-${key}`).textContent = `${valBWon}/`;
+                                document.getElementById(`b-${totalKey}`).textContent = valBTotal;
+                            } else if (key.includes('_success')) { // Percentages
+                                document.getElementById(`a-${key}`).textContent = `${data.a?.[key] ?? 0}%`;
+                                document.getElementById(`b-${key}`).textContent = `${data.b?.[key] ?? 0}%`;
+                            }
+                            else {
+                                document.getElementById(`a-${key}`).textContent = data.a?.[key] ?? 0;
+                                document.getElementById(`b-${key}`).textContent = data.b?.[key] ?? 0;
+                            }
+                        });
+                    });
+                }
+            });
+
+            // Add event listeners for input changes to sync button text
+            teamANameInput.addEventListener('input', () => {
+                teamAButton.textContent = teamANameInput.value || 'Team A';
+            });
+            teamBNameInput.addEventListener('input', () => {
+                teamBButton.textContent = teamBNameInput.value || 'Team B';
+            });
+        });
+
+        // Adjust function for regular stats
+        window.adjust = function(statKey, diff, totalKey = null) {
+            const targetElementId = `${selectedTeam}-${statKey}`;
+            const targetElement = document.getElementById(targetElementId);
+            if (!targetElement) {
+                console.warn(`Element with ID ${targetElementId} not found.`);
+                return;
+            }
+
+            let current;
+            if (totalKey) { // For "won/total" stats (e.g., scrums_won)
+                const currentParts = targetElement.textContent.split('/');
+                const currentWon = parseFloat(currentParts[0]);
+                const currentTotal = parseFloat(document.getElementById(`${selectedTeam}-${totalKey}`).textContent);
+
+                current = currentWon + diff;
+                if (current < 0) current = 0;
+                if (current > currentTotal) current = currentTotal; // Can't win more than total
+
+                targetElement.textContent = `${current}/`; // Update the won part
+                document.getElementById(`${selectedTeam}-${totalKey}`).textContent = currentTotal; // Ensure total is also set
+            } else { // For regular number stats or percentages
+                current = parseFloat(targetElement.textContent.replace('%', ''));
+                current += diff;
+                if (current < 0) current = 0;
+                if (statKey.includes('possession') || statKey.includes('tackle_success') || statKey.includes('territory')) {
+                    if (current > 100) current = 100;
+                    targetElement.textContent = `${current}%`;
+                }
+                else {
+                    targetElement.textContent = current;
                 }
             }
-        });
-      }
-      else { // Regular stats (Attack, Discipline, Kicking, SCORE)
-        section.stats.forEach(([label, key]) => {
-          sectionStatsGrid.insertAdjacentHTML('beforeend', `
-            <div class="stat-cell" id="a-${key}">0</div>
-            <div class="stat-label-item">
-              ${label}
-              <div class="stat-controls">
-                <button onclick="adjust('${key}',1)">+</button>
-                <button onclick="adjust('${key}',-1)">-</button>
-              </div>
-            </div>
-            <div class="stat-cell" id="b-${key}">0</div>
-          `);
-        });
-      }
-      sectionDiv.appendChild(sectionStatsGrid);
-      mainContainer.appendChild(sectionDiv);
-    });
+        }
 
-    // Load initial data from Firebase on page load
-    onValue(summaryRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            // Populate team names
-            teamANameInput.value = data.teamNames?.a || 'Team A';
-            teamBNameInput.value = data.teamNames?.b || 'Team B';
-            // Update team selector button text
-            teamAButton.textContent = teamANameInput.value;
-            teamBButton.textContent = teamBNameInput.value;
+        // New function specifically for adjusting total (e.g. scrums_total)
+        window.adjustTotal = function(totalKey, diff) {
+            const targetTotalElementId = `${selectedTeam}-${totalKey}`;
+            const targetTotalElement = document.getElementById(targetTotalElementId);
+            if (!targetTotalElement) {
+                console.warn(`Element with ID ${targetTotalElementId} not found.`);
+                return;
+            }
+            let currentTotal = parseFloat(targetTotalElement.textContent);
+            currentTotal += diff;
+            if (currentTotal < 0) currentTotal = 0;
+
+            // Update the total part of the display (e.g. 5/10)
+            const wonKey = totalKey.replace('_total', '_won');
+            const wonElement = document.getElementById(`${selectedTeam}-${wonKey}`);
+            if (wonElement) {
+                const currentWon = parseFloat(wonElement.textContent.split('/')[0]);
+                if (currentWon > currentTotal) { // If won is now greater than new total, cap won at new total
+                    wonElement.textContent = `${currentTotal}/`;
+                } else {
+                    wonElement.textContent = `${currentWon}/`;
+                }
+            }
+            targetTotalElement.textContent = currentTotal; // This updates the span within the won/total display
+        }
+
+        // Adjust function for bar stats (Territory, Possession)
+        window.adjustBar = function(statKey, diff) {
+            let currentA = parseFloat(document.getElementById(`a-${statKey}-value`).textContent.replace('%', ''));
+            let currentB = parseFloat(document.getElementById(`b-${statKey}-value`).textContent.replace('%', ''));
+
+            if (selectedTeam === 'a') {
+                currentA += diff;
+                if (currentA < 0) currentA = 0;
+                if (currentA > 100) currentA = 100;
+                currentB = 100 - currentA;
+            } else { // selectedTeam === 'b'
+                currentB += diff;
+                if (currentB < 0) currentB = 0;
+                if (currentB > 100) currentB = 100;
+                currentA = 100 - currentB;
+            }
+
+            document.getElementById(`a-${statKey}-value`).textContent = `${currentA}%`;
+            document.getElementById(`b-${statKey}-value`).textContent = `${currentB}%`;
+            document.getElementById(`a-${statKey}-bar`).style.width = `${currentA}%`;
+            document.getElementById(`b-${statKey}-bar`).style.width = `${currentB}%`;
+        }
 
 
-            // Populate stats
+        window.saveToFirebase = function() {
+            const data = {
+                teamNames: {
+                    a: teamANameInput.value || 'Team A', // Save Team A's name
+                    b: teamBNameInput.value || 'Team B'  // Save Team B's name
+                },
+                a: {},
+                b: {}
+            };
+            // Iterate through the structured sections to save correct data
             statSections.forEach(section => {
                 section.stats.forEach(stat => {
                     const type = stat[0];
-                    if (type === 'text') return; // Skip sub-headings
+                    if (type === 'text') return; // Skip saving for sub-headings
 
-                    const key = stat[1];
-                    const totalKey = stat[2];
+                    const key = stat[1]; // Primary key
+                    const totalKey = stat[2]; // Secondary key for 'won/total' stats
 
                     if (section.type === 'bar') {
-                        const valA = data.a?.[key] ?? 0;
-                        const valB = data.b?.[key] ?? 0;
-                        document.getElementById(`a-${key}-value`).textContent = `${valA}%`;
-                        document.getElementById(`b-${key}-value`).textContent = `${valB}%`;
-                        document.getElementById(`a-${key}-bar`).style.width = `${valA}%`;
-                        document.getElementById(`b-${key}-bar`).style.width = `${valB}%`;
-                    } else if (totalKey) {
-                        const valAWon = data.a?.[key] ?? 0;
-                        const valATotal = data.a?.[totalKey] ?? 0;
-                        const valBWon = data.b?.[key] ?? 0;
-                        const valBTotal = data.b?.[totalKey] ?? 0;
-                        document.getElementById(`a-${key}`).textContent = `${valAWon}/`;
-                        document.getElementById(`a-${totalKey}`).textContent = valATotal;
-                        document.getElementById(`b-${key}`).textContent = `${valBWon}/`;
-                        document.getElementById(`b-${totalKey}`).textContent = valBTotal;
-                    } else if (key.includes('_success')) { // Percentages
-                        document.getElementById(`a-${key}`).textContent = `${data.a?.[key] ?? 0}%`;
-                        document.getElementById(`b-${key}`).textContent = `${data.b?.[key] ?? 0}%`;
-                    }
-                    else {
-                        document.getElementById(`a-${key}`).textContent = data.a?.[key] ?? 0;
-                        document.getElementById(`b-${key}`).textContent = data.b?.[key] ?? 0;
+                        // For bar stats, get the current percentage from the UI
+                        const valA = parseFloat(document.getElementById(`a-${key}-value`).textContent.replace('%', ''));
+                        const valB = parseFloat(document.getElementById(`b-${key}-value`).textContent.replace('%', ''));
+                        data['a'][key] = valA;
+                        data['b'][key] = valB;
+                    } else if (totalKey) { // Won/Total stats
+                        const valAWon = parseFloat(document.getElementById(`a-${key}`).textContent.split('/')[0]);
+                        const valATotal = parseFloat(document.getElementById(`a-${totalKey}`).textContent);
+                        const valBWon = parseFloat(document.getElementById(`b-${key}`).textContent.split('/')[0]);
+                        const valBTotal = parseFloat(document.getElementById(`b-${totalKey}`).textContent);
+
+                        data['a'][key] = valAWon; // e.g., scrums_won
+                        data['a'][totalKey] = valATotal; // e.g., scrums_total
+                        data['b'][key] = valBWon;
+                        data['b'][totalKey] = valBTotal;
+
+                    } else { // Regular stats and percentages like tackle success
+                        const valA = parseFloat(document.getElementById(`a-${key}`).textContent.replace('%', ''));
+                        const valB = parseFloat(document.getElementById(`b-${key}`).textContent.replace('%', ''));
+                        data['a'][key] = valA;
+                        data['b'][key] = valB;
                     }
                 });
             });
+
+            set(summaryRef, data).then(() => alert('✅ Data saved!'))
+                                .catch(error => console.error("Error saving to Firebase:", error));
         }
-    });
-
-    // Add event listeners for input changes to sync button text
-    teamANameInput.addEventListener('input', () => {
-        teamAButton.textContent = teamANameInput.value || 'Team A';
-    });
-    teamBNameInput.addEventListener('input', () => {
-        teamBButton.textContent = teamBNameInput.value || 'Team B';
-    });
-  });
-
-  // Adjust function for regular stats
-  window.adjust = function(statKey, diff, totalKey = null) {
-    const targetElementId = `${selectedTeam}-${statKey}`;
-    const targetElement = document.getElementById(targetElementId);
-    if (!targetElement) {
-        console.warn(`Element with ID ${targetElementId} not found.`);
-        return;
-    }
-
-    let current;
-    if (totalKey) { // For "won/total" stats (e.g., scrums_won)
-        const currentParts = targetElement.textContent.split('/');
-        const currentWon = parseFloat(currentParts[0]);
-        const currentTotal = parseFloat(document.getElementById(`${selectedTeam}-${totalKey}`).textContent);
-
-        current = currentWon + diff;
-        if (current < 0) current = 0;
-        if (current > currentTotal) current = currentTotal; // Can't win more than total
-
-        targetElement.textContent = `${current}/`; // Update the won part
-        document.getElementById(`${selectedTeam}-${totalKey}`).textContent = currentTotal; // Ensure total is also set
-    } else { // For regular number stats or percentages
-        current = parseFloat(targetElement.textContent.replace('%', ''));
-        current += diff;
-        if (current < 0) current = 0;
-        if (statKey.includes('possession') || statKey.includes('tackle_success') || statKey.includes('territory')) {
-            if (current > 100) current = 100;
-            targetElement.textContent = `${current}%`;
-        }
-        else {
-            targetElement.textContent = current;
-        }
-    }
-  }
-
-  // New function specifically for adjusting total (e.g. scrums_total)
-  window.adjustTotal = function(totalKey, diff) {
-      const targetTotalElementId = `${selectedTeam}-${totalKey}`;
-      const targetTotalElement = document.getElementById(targetTotalElementId);
-      if (!targetTotalElement) {
-          console.warn(`Element with ID ${targetTotalElementId} not found.`);
-          return;
-      }
-      let currentTotal = parseFloat(targetTotalElement.textContent);
-      currentTotal += diff;
-      if (currentTotal < 0) currentTotal = 0;
-
-      // Update the total part of the display (e.g. 5/10)
-      const wonKey = totalKey.replace('_total', '_won');
-      const wonElement = document.getElementById(`${selectedTeam}-${wonKey}`);
-      if (wonElement) {
-          const currentWon = parseFloat(wonElement.textContent.split('/')[0]);
-          if (currentWon > currentTotal) { // If won is now greater than new total, cap won at new total
-              wonElement.textContent = `${currentTotal}/`;
-          } else {
-              wonElement.textContent = `${currentWon}/`;
-          }
-      }
-      targetTotalElement.textContent = currentTotal; // This updates the span within the won/total display
-  }
-
-  // Adjust function for bar stats (Territory, Possession)
-  window.adjustBar = function(statKey, diff) {
-      let currentA = parseFloat(document.getElementById(`a-${statKey}-value`).textContent.replace('%', ''));
-      let currentB = parseFloat(document.getElementById(`b-${statKey}-value`).textContent.replace('%', ''));
-
-      if (selectedTeam === 'a') {
-          currentA += diff;
-          if (currentA < 0) currentA = 0;
-          if (currentA > 100) currentA = 100;
-          currentB = 100 - currentA;
-      } else { // selectedTeam === 'b'
-          currentB += diff;
-          if (currentB < 0) currentB = 0;
-          if (currentB > 100) currentB = 100;
-          currentA = 100 - currentB;
-      }
-
-      document.getElementById(`a-${statKey}-value`).textContent = `${currentA}%`;
-      document.getElementById(`b-${statKey}-value`).textContent = `${currentB}%`;
-      document.getElementById(`a-${statKey}-bar`).style.width = `${currentA}%`;
-      document.getElementById(`b-${statKey}-bar`).style.width = `${currentB}%`;
-  }
-
-
-  window.saveToFirebase = function() {
-    const data = {
-        teamNames: {
-            a: teamANameInput.value || 'Team A', // Save Team A's name
-            b: teamBNameInput.value || 'Team B'  // Save Team B's name
-        },
-        a: {},
-        b: {}
-    };
-    // Iterate through the structured sections to save correct data
-    statSections.forEach(section => {
-        section.stats.forEach(stat => {
-            const type = stat[0];
-            if (type === 'text') return; // Skip saving for sub-headings
-
-            const key = stat[1]; // Primary key
-            const totalKey = stat[2]; // Secondary key for 'won/total' stats
-
-            if (section.type === 'bar') {
-                // For bar stats, get the current percentage from the UI
-                const valA = parseFloat(document.getElementById(`a-${key}-value`).textContent.replace('%', ''));
-                const valB = parseFloat(document.getElementById(`b-${key}-value`).textContent.replace('%', ''));
-                data['a'][key] = valA;
-                data['b'][key] = valB;
-            } else if (totalKey) { // Won/Total stats
-                const valAWon = parseFloat(document.getElementById(`a-${key}`).textContent.split('/')[0]);
-                const valATotal = parseFloat(document.getElementById(`a-${totalKey}`).textContent);
-                const valBWon = parseFloat(document.getElementById(`b-${key}`).textContent.split('/')[0]);
-                const valBTotal = parseFloat(document.getElementById(`b-${totalKey}`).textContent);
-
-                data['a'][key] = valAWon; // e.g., scrums_won
-                data['a'][totalKey] = valATotal; // e.g., scrums_total
-                data['b'][key] = valBWon;
-                data['b'][totalKey] = valBTotal;
-
-            } else { // Regular stats and percentages like tackle success
-                const valA = parseFloat(document.getElementById(`a-${key}`).textContent.replace('%', ''));
-                const valB = parseFloat(document.getElementById(`b-${key}`).textContent.replace('%', ''));
-                data['a'][key] = valA;
-                data['b'][key] = valB;
-            }
-        });
-    });
-
-    set(summaryRef, data).then(() => alert('✅ Data saved!'))
-                        .catch(error => console.error("Error saving to Firebase:", error));
-  }
-</script>
+    </script>
 </body>
 </html>
