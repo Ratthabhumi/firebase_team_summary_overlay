@@ -196,6 +196,11 @@
             font-size: 1.5em; /* Larger timer font */
             color: yellow; /* Highlight timer */
         }
+        .right-side-header #teamANameHeader,
+        .right-side-header #teamBNameHeader {
+            flex: 1; /* Ensure equal spacing */
+            text-align: center;
+        }
 
         .right-side-stat-row {
             display: flex;
@@ -241,18 +246,18 @@
 <body>
     <div class="full-screen-container">
         <div class="overlay left-overlay" id="rugbyOverlay">
-            <div id="scoreline"><strong>Team A</strong> 0 - 0 <strong>Team B</strong></div>
-            </div>
+            <div id="scoreline"><strong><span id="teamANameScore">Team A</span></strong> 0 - 0 <strong><span id="teamBNameScore">Team B</span></strong></div>
+        </div>
 
         <div class="overlay right-overlay">
             <div class="right-side-box">
                 <div class="right-side-header">
-                    <span>Team A</span>
-
-                    <span>Team B</span>
+                    <span id="teamANameHeader">Team A</span>
+                    <span id="match-timer">00:00</span>
+                    <span id="teamBNameHeader">Team B</span>
                 </div>
                 <div class="right-side-stats-container" id="rightSideStats">
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -373,6 +378,11 @@
             { label: 'POSSESSION', key: 'possession_wg', type: 'bar' }
         ];
 
+        const teamANameScore = document.getElementById('teamANameScore');
+        const teamBNameScore = document.getElementById('teamBNameScore');
+        const teamANameHeader = document.getElementById('teamANameHeader');
+        const teamBNameHeader = document.getElementById('teamBNameHeader');
+
         const scoreline = document.getElementById('scoreline');
         const rugbyOverlay = document.getElementById('rugbyOverlay');
         const rightSideStatsContainer = document.getElementById('rightSideStats');
@@ -410,11 +420,21 @@
             const a = data.a || {};
             const b = data.b || {};
             
+            // NEW: Get team names from Firebase data
+            const teamA_name = data.teamA_name || 'Team A'; // Default to 'Team A' if not set
+            const teamB_name = data.teamB_name || 'Team B'; // Default to 'Team B' if not set
+
+            // Update team names in the overlay
+            teamANameScore.textContent = teamA_name;
+            teamBNameScore.textContent = teamB_name;
+            teamANameHeader.textContent = teamA_name;
+            teamBNameHeader.textContent = teamB_name;
+
             // Get points directly from Firebase data, as set by Admin
             const aPts = a.points ?? 0;
             const bPts = b.points ?? 0;
 
-            scoreline.innerHTML = `<strong>Team A</strong> ${aPts} - ${bPts} <strong>Team B</strong>`;
+            scoreline.innerHTML = `<strong><span id="teamANameScore">${teamA_name}</span></strong> ${aPts} - ${bPts} <strong><span id="teamBNameScore">${teamB_name}</span></strong>`;
 
             // Update Left Overlay
             while (rugbyOverlay.children.length > 1) { // Keep the scoreline div
