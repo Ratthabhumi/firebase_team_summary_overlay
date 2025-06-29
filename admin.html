@@ -259,7 +259,7 @@
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-  import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
+  import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
 
   const firebaseConfig = {
     apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
@@ -622,24 +622,6 @@
     set(summaryRef, data).then(() => alert('✅ Data saved!'))
                         .catch(error => console.error("Error saving to Firebase:", error));
   }
-
-  onValue(summaryRef, (snapshot) => {
-    const data = snapshot.val();
-    if (!data) {
-        console.log("No data available in Firebase summary.");
-        return;
-    }
-
-    // Retrieve team names from Firebase
-    const teamA_name = data.teamA_name || 'Team A'; // Default to 'Team A' if not set
-    const teamB_name = data.teamB_name || 'Team B'; // Default to 'Team B' if not set
-
-    // Update team names in the overlay
-    teamANameScore.textContent = teamA_name;
-    teamBNameScore.textContent = teamB_name;
-    teamANameHeader.textContent = teamA_name;
-    teamBNameHeader.textContent = teamB_name;
-});
 </script>
 </body>
 </html>
