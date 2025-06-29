@@ -22,6 +22,14 @@
     .team-selector {
       text-align: center;
       margin-bottom: 20px;
+      display: flex; /* Use flexbox for layout */
+      flex-direction: column; /* Stack items vertically */
+      gap: 10px; /* Space between buttons and inputs */
+    }
+    .team-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px; /* Space between the two team buttons */
     }
     .team-selector button {
       margin: 0 10px;
@@ -32,10 +40,27 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      min-width: 150px; /* Give buttons a minimum width */
     }
     .team-selector button.active {
       background: #007bff;
       color: #000;
+    }
+    .team-name-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      width: 100%; /* Ensure inputs take full width of container */
+    }
+    .team-name-inputs input {
+      padding: 8px 12px;
+      font-size: 16px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background: #333;
+      color: #fff;
+      text-align: center;
+      min-width: 150px; /* Match button width */
     }
 
     /* Main grid for organizing sections */
@@ -209,8 +234,14 @@
 
 <h1>Rugby Match Admin</h1>
 <div class="team-selector">
-  <button id="team-a" class="active" onclick="selectTeam('a')">Team A</button>
-  <button id="team-b" onclick="selectTeam('b')">Team B</button>
+  <div class="team-buttons">
+    <button id="team-a-btn" class="active" onclick="selectTeam('a')">Team A</button>
+    <button id="team-b-btn" onclick="selectTeam('b')">Team B</button>
+  </div>
+  <div class="team-name-inputs">
+    <input type="text" id="team-a-name" value="Team A" onkeyup="updateTeamName('a', this.value)">
+    <input type="text" id="team-b-name" value="Team B" onkeyup="updateTeamName('b', this.value)">
+  </div>
 </div>
 
 <div class="main-stats-container" id="statsPanel">
@@ -319,15 +350,27 @@
 
   let selectedTeam = 'a'; // Default to Team A
 
+  // Function to select team and update button styles
   window.selectTeam = function(team) {
     selectedTeam = team;
-    document.getElementById('team-a').classList.remove('active');
-    document.getElementById('team-b').classList.remove('active');
-    document.getElementById('team-' + team).classList.add('active');
+    document.getElementById('team-a-btn').classList.remove('active');
+    document.getElementById('team-b-btn').classList.remove('active');
+    document.getElementById(`team-${team}-btn`).classList.add('active');
+  }
+
+  // Function to update team name button from input
+  window.updateTeamName = function(team, name) {
+    const teamButton = document.getElementById(`team-${team}-btn`);
+    teamButton.textContent = name || `Team ${team.toUpperCase()}`; // Fallback to "Team A/B" if input is empty
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     const mainContainer = document.getElementById('statsPanel');
+
+    // Initialize team names from input fields
+    updateTeamName('a', document.getElementById('team-a-name').value);
+    updateTeamName('b', document.getElementById('team-b-name').value);
+
 
     statSections.forEach(section => {
       const sectionDiv = document.createElement('div');
@@ -366,14 +409,14 @@
       } else if (section.type === 'mixed') {
         section.stats.forEach(stat => {
             const type = stat[0]; // 'text' or actual label
-            const label = stat[1]; // actual label or the text for sub-heading
+            const label = stat[0]; // actual label or the text for sub-heading
             const key = stat[1]; // primary key like 'scrums_won' (if not 'text' type)
             const totalKey = stat[2]; // secondary key like 'scrums_total'
 
             if (type === 'text') { // Handle sub-heading
                 const subHeadingDiv = document.createElement('div');
                 subHeadingDiv.classList.add('sub-heading');
-                subHeadingDiv.textContent = label; // The label is the text in this case
+                subHeadingDiv.textContent = stat[1]; // The label is the text in this case
                 sectionStatsGrid.appendChild(subHeadingDiv);
             }
             else if (totalKey) { // This is a "won/total" stat (Scrums, Lineouts)
@@ -528,6 +571,11 @@
 
   window.saveToFirebase = function() {
     const data = { a: {}, b: {} };
+
+    // Save team names
+    data.a.name = document.getElementById('team-a-name').value;
+    data.b.name = document.getElementById('team-b-name').value;
+
     // Iterate through the structured sections to save correct data
     statSections.forEach(section => {
         section.stats.forEach(stat => {
