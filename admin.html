@@ -1,78 +1,86 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin: Team Summary</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; background: #111; color: white; }
-    h2 { margin-top: 30px; }
-    label { display: inline-block; width: 150px; }
-    input[type=number] { width: 60px; }
-    .row { margin-bottom: 10px; }
-    .team { margin-bottom: 20px; background: #222; padding: 15px; border-radius: 8px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Panel - Rugby Team Summary</title>
+<style>
+  body { font-family: sans-serif; background: #222; color: white; padding: 20px; }
+  label { display: inline-block; width: 140px; }
+  input { width: 60px; margin-bottom: 10px; }
+  button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  .team-block { margin-bottom: 30px; background: #333; padding: 15px; border-radius: 8px; }
+</style>
 </head>
 <body>
-  <h1>Admin Panel: Update Team Summary (Firebase)</h1>
 
-  <div class="team">
-    <h2>Team A</h2>
-    <div class="row"><label>Tries:</label><input type="number" id="a-tries" value="6" /></div>
-    <div class="row"><label>Conversions:</label><input type="number" id="a-conv" value="3" /></div>
-    <div class="row"><label>Penalty Goals:</label><input type="number" id="a-pen" value="2" /></div>
-    <div class="row"><label>Drop Goals:</label><input type="number" id="a-drop" value="1" /></div>
-    <div class="row"><label>Possession %:</label><input type="number" id="a-possession" value="58" /></div>
-    <div class="row"><label>Territory Avg (km):</label><input type="number" step="0.1" id="a-territory" value="3.2" /></div>
-  </div>
+<h1>Admin Panel: Update Team Summary</h1>
 
-  <div class="team">
-    <h2>Team B</h2>
-    <div class="row"><label>Tries:</label><input type="number" id="b-tries" value="4" /></div>
-    <div class="row"><label>Conversions:</label><input type="number" id="b-conv" value="2" /></div>
-    <div class="row"><label>Penalty Goals:</label><input type="number" id="b-pen" value="3" /></div>
-    <div class="row"><label>Drop Goals:</label><input type="number" id="b-drop" value="0" /></div>
-    <div class="row"><label>Possession %:</label><input type="number" id="b-possession" value="42" /></div>
-    <div class="row"><label>Territory Avg (km):</label><input type="number" step="0.1" id="b-territory" value="2.7" /></div>
-  </div>
+<div class="team-block" id="teamA">
+  <h2>Team A</h2>
+  <label>Tries:</label><input type="number" id="a-tries" value="6" /><br/>
+  <label>Conversions:</label><input type="number" id="a-conv" value="3" /><br/>
+  <label>Penalty Goals:</label><input type="number" id="a-pen" value="2" /><br/>
+  <label>Drop Goals:</label><input type="number" id="a-drop" value="1" /><br/>
+  <label>Possession %:</label><input type="number" id="a-possession" value="58" /><br/>
+  <label>Territory Avg (km):</label><input type="number" step="0.1" id="a-territory" value="3.2" />
+</div>
 
-  <button onclick="save()">💾 Save</button>
+<div class="team-block" id="teamB">
+  <h2>Team B</h2>
+  <label>Tries:</label><input type="number" id="b-tries" value="4" /><br/>
+  <label>Conversions:</label><input type="number" id="b-conv" value="2" /><br/>
+  <label>Penalty Goals:</label><input type="number" id="b-pen" value="3" /><br/>
+  <label>Drop Goals:</label><input type="number" id="b-drop" value="0" /><br/>
+  <label>Possession %:</label><input type="number" id="b-possession" value="42" /><br/>
+  <label>Territory Avg (km):</label><input type="number" step="0.1" id="b-territory" value="2.7" />
+</div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
+<button id="saveBtn">💾 Save to Firebase</button>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
+    authDomain: "rugby-c8da2.firebaseapp.com",
+    databaseURL: "https://rugby-c8da2-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "rugby-c8da2",
+    storageBucket: "rugby-c8da2.firebasestorage.app",
+    messagingSenderId: "812436187599",
+    appId: "1:812436187599:web:4dd147d1b35c2122c08aba",
+    measurementId: "G-07W3W2VZND"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const summaryRef = ref(db, 'summary');
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const data = {
+      a: {
+        tries: Number(document.getElementById('a-tries').value),
+        conv: Number(document.getElementById('a-conv').value),
+        pen: Number(document.getElementById('a-pen').value),
+        drop: Number(document.getElementById('a-drop').value),
+        possession: Number(document.getElementById('a-possession').value),
+        territory: Number(document.getElementById('a-territory').value),
+      },
+      b: {
+        tries: Number(document.getElementById('b-tries').value),
+        conv: Number(document.getElementById('b-conv').value),
+        pen: Number(document.getElementById('b-pen').value),
+        drop: Number(document.getElementById('b-drop').value),
+        possession: Number(document.getElementById('b-possession').value),
+        territory: Number(document.getElementById('b-territory').value),
+      }
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    set(summaryRef, data)
+      .then(() => alert('Data saved to Firebase!'))
+      .catch(e => alert('Error saving data: ' + e));
+  });
+</script>
 
-    function save() {
-      const data = {
-        a: {
-          tries: Number(document.getElementById('a-tries').value),
-          conv: Number(document.getElementById('a-conv').value),
-          pen: Number(document.getElementById('a-pen').value),
-          drop: Number(document.getElementById('a-drop').value),
-          possession: Number(document.getElementById('a-possession').value),
-          territory: Number(document.getElementById('a-territory').value)
-        },
-        b: {
-          tries: Number(document.getElementById('b-tries').value),
-          conv: Number(document.getElementById('b-conv').value),
-          pen: Number(document.getElementById('b-pen').value),
-          drop: Number(document.getElementById('b-drop').value),
-          possession: Number(document.getElementById('b-possession').value),
-          territory: Number(document.getElementById('b-territory').value)
-        }
-      };
-      db.ref('summary').set(data);
-      alert('Data saved to Firebase!');
-    }
-  </script>
 </body>
 </html>
