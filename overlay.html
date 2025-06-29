@@ -279,6 +279,13 @@
         // This structure MUST mirror the statSections in your Admin page
         const statSections = [
             {
+                title: "SCORE", // Added a SCORE section for clarity
+                type: "regular",
+                stats: [
+                    ['POINTS', 'points'] // Assuming 'points' is the key for total points from Admin
+                ]
+            },
+            {
                 title: "TERRITORY WHOLE GAME",
                 type: "bar",
                 stats: [['Territory (%)', 'territory_wg']]
@@ -304,7 +311,8 @@
                     ['Defenders Beaten', 'defenders_beaten'],
                     ['Offloads', 'offloads'],
                     ['Mauls Won', 'mauls_won'],
-                    ['Rucks Won', 'rucks_won']
+                    ['Rucks Won', 'rucks_won'],
+                    ['Linebreaks', 'linebreaks'] // Added Linebreaks here
                 ]
             },
             {
@@ -317,12 +325,14 @@
                 ]
             },
             {
-                title: "DISCIPLINE",
+                title: "DISCIPLINE & ERRORS", // Renamed and added errors
                 type: "regular",
                 stats: [
                     ['Penalties Conceded', 'penalties_conceded'],
                     ['Red Cards', 'red_cards'],
-                    ['Yellow Cards', 'yellow_cards']
+                    ['Yellow Cards', 'yellow_cards'],
+                    ['Turnovers Conceded', 'turnovers_conceded'], // Added Turnovers Conceded
+                    ['Handling Errors', 'handling_errors'] // Added Handling Errors
                 ]
             },
             {
@@ -350,18 +360,15 @@
         ];
 
         // NEW: Stats specific to the right-side overlay
-        // NOTE: Keys like 'handling_errors' and 'turnovers_conceded' are not in your Admin page's statSections.
-        // If you want them to be updated from Admin, you'll need to add them there.
-        // For now, they will default to 0 if not present in Firebase data.
         const rightSideStatsConfig = [
-            // These map to existing keys in your Admin page's statSections or new ones
-            ['POINTS', 'points'], // This will be calculated from tries, conv etc.
-            ['LINEBREAKS', 'breaks'], // From previous stats array
-            ['TACKLES', 'tackles'], // From defence section
-            ['TACKLES MISSED', 'tackles_missed'], // From defence section
-            ['HANDLING ERRORS', 'handling_errors'], // New stat, might need adding to admin
-            ['TURNOVERS CONCEDED', 'turnovers_conceded'], // New stat, might need adding to admin
-            ['PENALTIES CONCEDED', 'penalties_conceded'], // From discipline section
+            // These map to existing keys in your Admin page's statSections
+            ['POINTS', 'points'],
+            ['LINEBREAKS', 'linebreaks'],
+            ['TACKLES', 'tackles'],
+            ['TACKLES MISSED', 'tackles_missed'],
+            ['HANDLING ERRORS', 'handling_errors'],
+            ['TURNOVERS CONCEDED', 'turnovers_conceded'],
+            ['PENALTIES CONCEDED', 'penalties_conceded'],
             { label: 'TERRITORY', key: 'territory_wg', type: 'bar' },
             { label: 'POSSESSION', key: 'possession_wg', type: 'bar' }
         ];
@@ -403,9 +410,9 @@
             const a = data.a || {};
             const b = data.b || {};
             
-            // Calculate scores based on the Admin page's point system for scoreline
-            const aPts = (a.tries || 0) * 5 + (a.conv || 0) * 2 + (a.pen || 0) * 3 + (a.drop || 0) * 3;
-            const bPts = (b.tries || 0) * 5 + (b.conv || 0) * 2 + (b.pen || 0) * 3 + (b.drop || 0) * 3;
+            // Get points directly from Firebase data, as set by Admin
+            const aPts = a.points ?? 0;
+            const bPts = b.points ?? 0;
 
             scoreline.innerHTML = `<strong>Team A</strong> ${aPts} - ${bPts} <strong>Team B</strong>`;
 
@@ -458,12 +465,13 @@
                             const totalB = b[totalKey] ?? 0;
                             displayA = `${valA}/${totalA}`;
                             displayB = `${valB}/${totalB}`;
-                        } else if (key === 'tackle_success') { // Tackle Success %
+                        } else if (key.includes('_success')) { // Any stat ending in _success (e.g., tackle_success)
                             valA = a[key] ?? 0;
                             valB = b[key] ?? 0;
                             displayA = `${valA}%`;
                             displayB = `${valB}%`;
-                        } else { // All other regular numerical stats
+                        }
+                        else { // All other regular numerical stats
                             valA = a[key] ?? 0;
                             valB = b[key] ?? 0;
                             displayA = valA;
@@ -515,14 +523,11 @@
                     `);
                 } else { // Regular stats for right side
                     let displayA, displayB;
-                    if (label === 'POINTS') {
-                        displayA = aPts;
-                        displayB = bPts;
-                    } else if (key === 'tackle_success') { // If tackle success ever appears here
-                         displayA = `${a[key] ?? 0}%`;
-                         displayB = `${b[key] ?? 0}%`;
-                    }
-                    else {
+                    // Handle percentage display for certain keys if they show up here
+                    if (key.includes('_success')) {
+                        displayA = `${a[key] ?? 0}%`;
+                        displayB = `${b[key] ?? 0}%`;
+                    } else {
                         displayA = a[key] ?? 0;
                         displayB = b[key] ?? 0;
                     }
