@@ -1,122 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rugby Match Overlay</title>
-  <style>
-    body {
-      margin: 0;
-      background-color: rgba(0, 0, 0, 0);
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-    }
-    .overlay {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
-      background-color: rgba(0, 43, 127, 0.85);
-      border-radius: 10px;
-      font-size: 18px;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid white;
-      padding: 6px 12px;
-      text-align: center;
-    }
-    th {
-      background-color: #003B99;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rugby Match Live Overlay</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: rgba(0, 0, 0, 0); /* Fully transparent background */
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            /* Added for live stream flexibility */
+            overflow: hidden; /* Prevent scrollbars if content overflows */
+        }
+        .overlay {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            padding: 10px;
+            background-color: rgba(0, 43, 127, 0.85); /* Semi-transparent blue background */
+            border-radius: 10px;
+            font-size: 18px;
+            /* Positioning for live stream */
+            position: absolute; /* Allows precise positioning */
+            top: 10px; /* Example: 10px from top */
+            left: 10px; /* Example: 10px from left */
+            max-width: 90%; /* Ensure it doesn't take up the whole screen if embedded */
+            box-sizing: border-box; /* Include padding in width/height calculations */
+        }
+        #scoreline {
+            font-size: 1.5em; /* Make scoreline more prominent */
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%; /* Table takes full width of its container */
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid white;
+            padding: 6px 12px;
+            text-align: center;
+            white-space: nowrap; /* Prevent text wrapping in cells */
+        }
+        th {
+            background-color: #003B99; /* Header background color */
+        }
+        /* Optional: Add a class for specific rows you want to highlight or hide */
+        .highlight-row {
+            background-color: rgba(255, 255, 0, 0.2); /* Light yellow highlight */
+        }
+    </style>
 </head>
 <body>
-  <div class="overlay">
-    <div id="scoreline"><strong>Team A</strong> 0 - 0 <strong>Team B</strong></div>
-    <table>
-      <thead>
-        <tr>
-          <th>Stat</th>
-          <th>Team A</th>
-          <th>Team B</th>
-        </tr>
-      </thead>
-      <tbody id="statBody">
-        <!-- Filled by JS -->
-      </tbody>
-    </table>
-  </div>
+    <div class="overlay">
+        <div id="scoreline"><strong>Team A</strong> 0 - 0 <strong>Team B</strong></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Stat</th>
+                    <th>Team A</th>
+                    <th>Team B</th>
+                </tr>
+            </thead>
+            <tbody id="statBody">
+                </tbody>
+        </table>
+    </div>
 
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-    import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
-      authDomain: "rugby-c8da2.firebaseapp.com",
-      databaseURL: "https://rugby-c8da2-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "rugby-c8da2",
-      storageBucket: "rugby-c8da2.appspot.com",
-      messagingSenderId: "812436187599",
-      appId: "1:812436187599:web:4dd147d1b35c2122c08aba",
-      measurementId: "G-07W3W2VZND"
-    };
+        // Your Firebase configuration (keep this as is)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxU5xfTf8wRTnkmTHP7pR3Aon7IISRvyY",
+            authDomain: "rugby-c8da2.firebaseapp.com",
+            databaseURL: "https://rugby-c8da2-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "rugby-c8da2",
+            storageBucket: "rugby-c8da2.appspot.com",
+            messagingSenderId: "812436187599",
+            appId: "1:812436187599:web:4dd147d1b35c2122c08aba",
+            measurementId: "G-07W3W2VZND"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const summaryRef = ref(db, 'summary');
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const summaryRef = ref(db, 'summary');
 
-    const statList = [
-      ['Tries', 'tries'],
-      ['Conversions', 'conv'],
-      ['Penalty Goals', 'pen'],
-      ['Drop Goals', 'drop'],
-      ['Possession %', 'possession'],
-      ['Territory (km)', 'territory'],
-      ['Yellow Cards', 'yellow'],
-      ['Red Cards', 'red'],
-      ['Pens Against', 'pens'],
-      ['Lineouts Won', 'lineouts'],
-      ['Scrums Won', 'scrums'],
-      ['Set Piece TO', 'setpiece'],
-      ['22m Entries', 'entries'],
-      ['Linebreaks', 'breaks'],
-      ['>3phases', 'phases']
-    ];
+        // List of statistics to display
+        const statList = [
+            ['Tries', 'tries'],
+            ['Conversions', 'conv'],
+            ['Penalty Goals', 'pen'],
+            ['Drop Goals', 'drop'],
+            ['Possession %', 'possession'],
+            ['Territory (km)', 'territory'],
+            ['Yellow Cards', 'yellow'],
+            ['Red Cards', 'red'],
+            ['Pens Against', 'pens'],
+            ['Lineouts Won', 'lineouts'],
+            ['Scrums Won', 'scrums'],
+            ['Set Piece TO', 'setpiece'],
+            ['22m Entries', 'entries'],
+            ['Linebreaks', 'breaks'],
+            ['>3phases', 'phases']
+        ];
 
-    const scoreline = document.getElementById('scoreline');
-    const statBody = document.getElementById('statBody');
+        const scoreline = document.getElementById('scoreline');
+        const statBody = document.getElementById('statBody');
 
-    onValue(summaryRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) return;
+        // Listen for real-time updates from Firebase
+        onValue(summaryRef, (snapshot) => {
+            const data = snapshot.val();
+            if (!data) {
+                console.log("No data available in Firebase summary.");
+                return;
+            }
 
-      const a = data.a || {};
-      const b = data.b || {};
-      
-      const aPts = (a.tries || 0) * 5 + (a.conv || 0) * 2 + (a.pen || 0) * 3 + (a.drop || 0) * 3;
-      const bPts = (b.tries || 0) * 5 + (b.conv || 0) * 2 + (b.pen || 0) * 3 + (b.drop || 0) * 3;
+            const a = data.a || {};
+            const b = data.b || {};
+            
+            // Calculate scores
+            const aPts = (a.tries || 0) * 5 + (a.conv || 0) * 2 + (a.pen || 0) * 3 + (a.drop || 0) * 3;
+            const bPts = (b.tries || 0) * 5 + (b.conv || 0) * 2 + (b.pen || 0) * 3 + (b.drop || 0) * 3;
 
-      scoreline.innerHTML = `<strong>Team A</strong> ${aPts} - ${bPts} <strong>Team B</strong>`;
+            // Update scoreline
+            scoreline.innerHTML = `<strong>Team A</strong> ${aPts} - ${bPts} <strong>Team B</strong>`;
 
-      statBody.innerHTML = '';
-      statList.forEach(([label, key]) => {
-        const row = `
-          <tr>
-            <td>${label}</td>
-            <td>${a[key] ?? 0}</td>
-            <td>${b[key] ?? 0}</td>
-          </tr>
-        `;
-        statBody.insertAdjacentHTML('beforeend', row);
-      });
-    });
-  </script>
+            // Clear previous table rows and populate with new data
+            statBody.innerHTML = ''; 
+            statList.forEach(([label, key]) => {
+                const row = `
+                    <tr>
+                        <td>${label}</td>
+                        <td>${a[key] ?? 0}</td>
+                        <td>${b[key] ?? 0}</td>
+                    </tr>
+                `;
+                statBody.insertAdjacentHTML('beforeend', row);
+            });
+        });
+    </script>
 </body>
 </html>
